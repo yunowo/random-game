@@ -1,0 +1,41 @@
+/**index.wxss**/
+
+.buttonrow {
+  display: flex;
+  flex-direction: row;
+}
+
+.lists {
+  display: list-item;
+}
+
+.generated-container {
+  flex-direction: column;
+  border: 1rpx solid #e0e0e0;
+  border-radius: 10rpx;
+}
+
+.generated {
+  flex: 1;
+  align-items: stretch;
+  margin: 10rpx;
+}
+
+.selected {
+  background: greenyellow;
+}
+
+.longtext_bd {
+  display: block;
+  min-width: 4em;
+  float: left;
+  margin-right: 1em;
+}
+
+.longtext_ft {
+  display: block;
+  font-size: 0.9em;
+  overflow: hidden;
+  word-break: keep-all;
+  word-wrap: break-word;
+}

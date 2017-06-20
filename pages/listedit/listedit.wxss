@@ -1,0 +1,7 @@
+/* listedit.wxss */
+
+.nameitem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

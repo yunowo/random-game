@@ -1,0 +1,35 @@
+<!--lists.wxml-->
+<view class="page__bd">
+  <view wx:if="{{state == 0}}">
+    <view class="weui-cells__title">名单</view>
+    <view class="weui-cells weui-cells_after-title">
+      <view wx:for="{{nameLists}}" id="{{item.id}}" class="weui-cell" bindtap="itemTap">
+        <view class="weui-cell__bd longtext_bd">{{item.title}}</view>
+        <view class="weui-cell__ft longtext_ft">
+          <text>{{item.namesString}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="weui-btn-area">
+      <button bindtap="addTap">添加</button>
+    </view>
+    <view class="weui-btn-area">
+      <button bindtap="importTap">导入</button>
+    </view>
+  </view>
+
+  <view wx:if="{{state == 1}}">
+    <view class="weui-cells__title">导入</view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">
+          <textarea class="weui-textarea" bindinput="input" maxlength="-1" auto-height placeholder="Base64" />
+        </view>
+      </view>
+    </view>
+    <view class="weui-btn-area">
+      <button bindtap="okTap">确定</button>
+    </view>
+  </view>
+</view>

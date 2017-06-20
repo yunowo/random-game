@@ -1,0 +1,113 @@
+<!--index.wxml-->
+<view class="page__bd" wx:if="{{!isEmpty}}">
+
+  <view wx:if="{{state == 1}}">
+    <view class="weui-cells__title">名单</view>
+    <view class="weui-cells weui-cells_after-title">
+      <radio-group bindchange="listChange">
+        <label class="weui-cell weui-check__label" wx:for="{{nameLists}}">
+          <radio class="weui-check" value="{{index}}" checked="{{item.checked}}" />
+          <view class="weui-cell__bd">{{item.title}}</view>
+          <view class="weui-cell__ft weui-cell__ft_in-radio" wx:if="{{item.checked}}">
+            <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+          </view>
+        </label>
+      </radio-group>
+    </view>
+    <view class="weui-btn-area">
+      <button type="primary" bindtap="OKTap">确定</button>
+    </view>
+  </view>
+
+  <view wx:if="{{state==2}}">
+    <view class="weui-cells__title">参与者</view>
+    <view class="weui-cells weui-cells_after-title">
+      <checkbox-group bindchange="namesChange">
+        <label class="weui-cell weui-check__label" wx:for="{{arrayFull}}" wx:key="value">
+          <checkbox class="weui-check" value="{{index}}" checked="{{arrayFlags[index]}}" />
+
+          <view class="weui-cell__hd weui-check__hd_in-checkbox">
+            <icon class="weui-icon-checkbox_circle" type="circle" size="23" wx:if="{{!arrayFlags[index]}}"></icon>
+            <icon class="weui-icon-checkbox_success" type="success" size="23" wx:if="{{arrayFlags[index]}}"></icon>
+          </view>
+          <view class="weui-cell__bd">{{item}}</view>
+        </label>
+      </checkbox-group>
+      <view class="weui-cell weui-cell_link">
+        <view bindtap="selectAllTap" class="weui-cell__bd">全选</view>
+      </view>
+      <view class="weui-cell weui-cell_link">
+        <view bindtap="clearAllTap" class="weui-cell__bd">清空</view>
+      </view>
+    </view>
+    <view class="weui-btn-area">
+      <button type="primary" bindtap="OKTap">确定</button>
+    </view>
+  </view>
+
+  <view wx:if="{{state==0}}">
+    <view class="weui-cells__title">参与者</view>
+
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell weui-cell_access" hover-class="weui-cell_active" bindtap="selectListTap">
+        <view class="weui-cell__bd longtext_bd">名单</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access longtext_ft">
+          <text>{{nameLists[selected].title}}</text>
+        </view>
+      </view>
+      <view class="weui-cell weui-cell_access" hover-class="weui-cell_active" bindtap="selectNamesTap">
+        <view class="weui-cell__bd longtext_bd">参与者</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access longtext_ft">
+          <text>{{arraySelectedString}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="weui-cells__title">选项</view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell weui-cell_select">
+        <view class="weui-cell__hd weui-cell__hd_in-select-after">
+          <view class="weui-label">模式</view>
+        </view>
+        <view class="weui-cell__bd">
+          <picker bindchange="pickerChange" value="{{mode}}" range="{{modes}}">
+            <view class="weui-select">{{modes[mode]}}</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <view class="weui-btn-area">
+      <button class="weui-btn" wx:if="{{randomized.length != arraySelected.length}}" type="primary" size="default" bindtap="randomTap">随机</button>
+    </view>
+    <view class="generated-container">
+      <view class="generated" wx:for="{{randomized}}" wx:key="key">
+        <view class="item-left">
+          <text class="item-title">{{arraySelected[index]}} {{item}}</text>
+          <icon type="success" wx:if="{{max == item}}" />
+          <text wx:if="{{max == item}}" class="selected">You!!!</text>
+        </view>
+      </view>
+    </view>
+    <view class="weui-btn-area">
+      <button class="weui-btn" wx:if="{{randomized.length == arraySelected.length}}" type="warn" size="default" bindtap="restartTap">重新开始</button>
+    </view>
+  </view>
+</view>
+
+<view class="page" wx:if="{{isEmpty}}">
+  <view class="weui-msg">
+    <view class="weui-msg__icon-area">
+      <icon type="info" size="93"></icon>
+    </view>
+    <view class="weui-msg__text-area">
+      <view class="weui-msg__title">无名单</view>
+      <view class="weui-msg__desc">请添加或导入名单</view>
+    </view>
+    <view class="weui-msg__opr-area">
+      <view class="weui-btn-area">
+        <button class="weui-btn" bindtap="emptyTap" type="primary">→_→</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,16 @@
+/**lists.wxss**/
+
+.longtext_bd {
+  display: block;
+  min-width: 4em;
+  float: left;
+  margin-right: 1em;
+}
+
+.longtext_ft {
+  display: block;
+  font-size: 0.9em;
+  overflow: hidden;
+  word-break: keep-all;
+  word-wrap: break-word;
+}

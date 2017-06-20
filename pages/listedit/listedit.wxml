@@ -1,0 +1,42 @@
+<!--listedit.wxml-->
+<view class="page__bd">
+  <view class="weui-cells__title">标题</view>
+  <view class="weui-cells weui-cells_after-title">
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__bd">
+        <input class="weui-input" bindinput="inputTitle" value="{{nameList.title}}" placeholder="标题" />
+      </view>
+    </view>
+  </view>
+
+  <!--<picker mode="selector" value="{{nameList.visibility}}" range="{{visibilities}}">
+  <view class="picker">{{visibilities[nameList.visibility]}}</view>
+</picker>-->
+
+  <view class="weui-cells__title">名单</view>
+  <view class="weui-cells weui-cells_after-title">
+    <view class="weui-cell weui-cell_input nameitem" wx:for="{{nameList.names}}">
+      <view class="weui-cell__bd">
+        <input id="{{index}}" bindinput="inputName" class="weui-input" value="{{item}}"></input>
+      </view>
+      <view class="weui-cell__ft nameitem">
+        <button id="{{index}}" class="weui-btn mini-btn" type="default" size="mini" bindtap="deleteTap">删除</button>
+      </view>
+    </view>
+    <view class="weui-cell weui-cell_link">
+      <view bindtap="addTap" class="weui-cell__bd">添加</view>
+    </view>
+  </view>
+  <view class="weui-btn-area">
+    <button bindtap="saveTap" type="primary">保存</button>
+  </view>
+  <view class="weui-btn-area">
+    <button wx:if="{{!isNew}}" bindtap="deleteAllTap" type="warn">删除</button>
+  </view>
+  <view class="weui-btn-area">
+    <button wx:if="{{!isNew}}" open-type="share">分享</button>
+  </view>
+  <view class="weui-btn-area">
+    <button wx:if="{{!isNew}}" bindtap="clipboardTap">复制到剪贴板</button>
+  </view>
+</view>
