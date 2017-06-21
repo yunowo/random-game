@@ -20,20 +20,20 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "iconPath": "images/placeholder.png",
-        "selectedIconPath": "images/placeholder.png",
+        "iconPath": "images/dice.png",
+        "selectedIconPath": "images/dice_selected.png",
         "text": "随机"
       },
       {
         "pagePath": "pages/lists/lists",
-        "iconPath": "images/placeholder.png",
-        "selectedIconPath": "images/placeholder.png",
+        "iconPath": "images/lists.png",
+        "selectedIconPath": "images/lists_selected.png",
         "text": "名单"
       },
       {
         "pagePath": "pages/me/me",
-        "iconPath": "images/placeholder.png",
-        "selectedIconPath": "images/placeholder.png",
+        "iconPath": "images/me.png",
+        "selectedIconPath": "images/me_selected.png",
         "text": "我的"
       }
     ]

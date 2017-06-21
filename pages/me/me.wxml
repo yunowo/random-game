@@ -1,14 +1,11 @@
 <!--me.wxml-->
 <view class="page__hd">
   <view class="page__title">Random Game</view>
-  <view class="page__desc">0.1.0 Preview</view>
+  <view class="page__desc">Early Access 0.1.1</view>
 </view>
 <view class="page__bd">
-  <view class="head-image">
-    <image src=""></image>
-  </view>
   <view class="userinfo">
-    <text>Me</text>
+    <text></text>
     <image class=".userinfo-avatar" src=""></image>
   </view>
 </view>

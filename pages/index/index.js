@@ -15,7 +15,8 @@ Page({
     arraySelectedString: '',
     arrayFlags: [],
     randomized: [],
-    max: 0
+    max: 0,
+    finished: false
   },
   listChange: function (e) {
     var selected = e.detail.value
@@ -63,6 +64,10 @@ Page({
   selectNamesTap: function () {
     this.setData({ state: 2 })
   },
+  pickerChange: function (e) {
+    this.setData({ mode: Number(e.detail.value) })
+    this.restartTap()
+  },
   OKTap: function () {
     if (this.data.state == 2) {
       var arraySelected = []
@@ -82,14 +87,21 @@ Page({
   },
   randomTap: function () {
     var r = this.data.randomized
-    if (r.length == this.data.arraySelected.length) {
-      return
+    if (this.data.mode == 0) {
+      if (r.length == this.data.arraySelected.length) {
+        return
+      }
+      r.push(Math.floor(Math.random() * 100))
+      this.setData({ randomized: r, max: Math.max(...r), finished: r.length == this.data.arraySelected.length })
     }
-    r.push(Math.floor(Math.random() * 100))
-    this.setData({ randomized: r, max: Math.max(...r) })
+    else if (this.data.mode == 1) {
+      r = Array(this.data.arraySelected.length).fill(-1)
+      r[Math.floor(Math.random() * this.data.arraySelected.length)] = 1
+      this.setData({ randomized: r, max: Math.max(...r), finished: true })
+    }
   },
   restartTap: function () {
-    this.setData({ randomized: [], max: 0 })
+    this.setData({ randomized: [], max: 0, finished: false })
   },
   emptyTap: function () {
     wx.switchTab({

@@ -70,7 +70,7 @@
           <view class="weui-label">模式</view>
         </view>
         <view class="weui-cell__bd">
-          <picker bindchange="pickerChange" value="{{mode}}" range="{{modes}}">
+          <picker bindchange="pickerChange" value="{{index}}" range="{{modes}}">
             <view class="weui-select">{{modes[mode]}}</view>
           </picker>
         </view>
@@ -78,19 +78,17 @@
     </view>
 
     <view class="weui-btn-area">
-      <button class="weui-btn" wx:if="{{randomized.length != arraySelected.length}}" type="primary" size="default" bindtap="randomTap">随机</button>
+      <button class="weui-btn" wx:if="{{!finished}}" type="primary" size="default" bindtap="randomTap">随机</button>
     </view>
     <view class="generated-container">
-      <view class="generated" wx:for="{{randomized}}" wx:key="key">
-        <view class="item-left">
-          <text class="item-title">{{arraySelected[index]}} {{item}}</text>
-          <icon type="success" wx:if="{{max == item}}" />
-          <text wx:if="{{max == item}}" class="selected">You!!!</text>
-        </view>
+      <view class="generated {{max == item ? 'choosen' : ''}}" wx:for="{{randomized}}" wx:if="{{item != -1}}" wx:key="key">
+        <text class="item-left">{{arraySelected[index]}}</text>
+        <text class="item-center" wx:if="{{mode != 1}}"> {{item}}</text>
+        <icon class="item-right" type="success" wx:if="{{max == item}}" />
       </view>
     </view>
     <view class="weui-btn-area">
-      <button class="weui-btn" wx:if="{{randomized.length == arraySelected.length}}" type="warn" size="default" bindtap="restartTap">重新开始</button>
+      <button class="weui-btn" wx:if="{{finished}}" type="warn" size="default" bindtap="restartTap">重新开始</button>
     </view>
   </view>
 </view>

@@ -1,30 +1,5 @@
 /**index.wxss**/
 
-.buttonrow {
-  display: flex;
-  flex-direction: row;
-}
-
-.lists {
-  display: list-item;
-}
-
-.generated-container {
-  flex-direction: column;
-  border: 1rpx solid #e0e0e0;
-  border-radius: 10rpx;
-}
-
-.generated {
-  flex: 1;
-  align-items: stretch;
-  margin: 10rpx;
-}
-
-.selected {
-  background: greenyellow;
-}
-
 .longtext_bd {
   display: block;
   min-width: 4em;
@@ -38,4 +13,31 @@
   overflow: hidden;
   word-break: keep-all;
   word-wrap: break-word;
+}
+
+.generated-container {
+  display: flex;
+  flex-direction: column;
+  border: 1rpx solid #e0e0e0;
+}
+
+.generated {
+  padding: 15rpx;
+  font-size: 32rpx;
+  align-items:center;
+}
+
+.choosen {
+  background: #B9F6CA;
+}
+
+.item-left {
+  float: left;
+  margin-left: 20rpx;
+  min-width: 260rpx;
+}
+
+.item-right {
+  float: right;
+  margin-right:20rpx;
 }
