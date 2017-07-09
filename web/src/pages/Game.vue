@@ -1,5 +1,6 @@
 <template>
-   <div id="main">
+ <page-content page-title="随机">
+   <div id="main-content">
     <div class="page__bd" v-if="!isEmpty">
 
       <div v-if="state === 1">
@@ -111,6 +112,7 @@
       </div>
     </div>
   </div>
+</page-content>
 </template>
 <style>
 

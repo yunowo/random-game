@@ -196,7 +196,7 @@
     data() {
       return {
       toolbar: true,
-      theme: 'default',
+      theme: 'game',
       pageTitle: '',
       };
     },

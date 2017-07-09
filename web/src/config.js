@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import VueMaterial from 'vue-material';
+import 'vue-material/dist/vue-material.css';
 
 Vue.use(VueMaterial);
 
 Vue.material.registerTheme({
-  app: {
+  game: {
     primary: 'blue',
     accent: 'pink',
   },
@@ -15,6 +16,10 @@ Vue.material.registerTheme({
   green: {
     primary: 'green',
     accent: 'pink',
+  },
+  orange: {
+    primary: 'orange',
+    accent: 'purple',
   },
   'light-blue': {
     primary: 'light-blue',
@@ -35,5 +40,9 @@ Vue.material.registerTheme({
   red: {
     primary: 'red',
     accent: 'pink',
+  },
+  white: {
+    primary: 'white',
+    accent: 'blue',
   },
 });

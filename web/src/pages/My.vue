@@ -1,5 +1,5 @@
 <template>
-   <div id="main">
+   <div id="main-content">
     <div class="page__hd">
       <div class="page__title">Random Game</div>
       <div class="page__desc">Early Access 0.1.1</div>

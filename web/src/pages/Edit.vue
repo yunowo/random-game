@@ -1,5 +1,5 @@
 <template>
-   <div id="main">
+   <div id="main-content">
     <div class="page__bd">
       <div class="weui-cells__title">标题</div>
       <div class="weui-cells weui-cells_after-title">

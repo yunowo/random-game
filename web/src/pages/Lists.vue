@@ -1,5 +1,5 @@
 <template>
-  <div id="main">
+  <div id="main-content">
     <div class="page__bd">
       <div v-if="state == 0">
         <div class="weui-cells__title">名单</div>
