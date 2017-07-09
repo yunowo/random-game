@@ -134,4 +134,7 @@ Page({
       arrayFlags: Array(names.length).fill(true)
     })
   },
+  onShareAppMessage: function () {
+
+  }
 })
