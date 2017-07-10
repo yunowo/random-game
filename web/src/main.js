@@ -66,5 +66,5 @@ router.afterEach((to) => {
   handleSectionTheme(to);
 });
 
-localStorage.setItem('selectedId', '0');
+localStorage.setItem('selectedId', '9e94e871bc75fab604f3c7872501c7ad07b3d87f');
 localStorage.setItem('nameLists', JSON.stringify([{ id: '9e94e871bc75fab604f3c7872501c7ad07b3d87f', visibility: 0, title: 'NotB515', names: ['WildHunter', 'PrinceRedMoon', 'SymPy', 'Robert Z', 'Yun', 'Personal_GH'], namesString: 'WildHunter, PrinceRedMoon, SymPy, Robert Z, Yun, Personal_GH' }]));
