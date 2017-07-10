@@ -204,9 +204,9 @@
       logo() {
         const theme = Vue.material.currentTheme;
         if (theme) {
-          return `assets/logo-vue-material-${theme}.png`;
+          return `static/img/logo-vue-material-${theme}.png`;
         }
-        return 'assets/logo-vue-material-default.png';
+        return 'static/img/logo-vue-material-default.png';
       },
     },
     methods: {

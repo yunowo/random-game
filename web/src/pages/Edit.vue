@@ -1,5 +1,5 @@
 <template>
-   <div id="main-content">
+  <div id="main-content">
     <div class="page__bd">
       <div class="weui-cells__title">标题</div>
       <div class="weui-cells weui-cells_after-title">
@@ -9,11 +9,11 @@
           </div>
         </div>
       </div>
-
+  
       <!--<picker mode="selector" value="{{nameList.visibility}}" range="{{visibilities}}">
-  <div class="picker">{{visibilities[nameList.visibility]}}</div>
-</picker>-->
-
+        <div class="picker">{{visibilities[nameList.visibility]}}</div>
+      </picker>-->
+  
       <div class="weui-cells__title">名单</div>
       <div class="weui-cells weui-cells_after-title">
         <div class="weui-cell weui-cell_input nameitem" wx:for="{{nameList.names}}">
@@ -21,7 +21,7 @@
             <input :id="index" bindinput="inputName" class="weui-input" :value="item"></input>
           </div>
           <div class="weui-cell__ft nameitem">
-            <button :id="index" class="weui-btn mini-btn" type="default" size="mini" bindtap="deleteTap">删除</button>
+            <md-button :id="index" class="md-raised" type="default" size="mini" bindtap="deleteTap">删除</md-button>
           </div>
         </div>
         <div class="weui-cell weui-cell_link">
@@ -29,33 +29,36 @@
         </div>
       </div>
       <div class="weui-btn-area">
-        <button @click="saveTap" type="primary">保存</button>
+        <md-button class="md-raised md-primary" @click="saveTap">保存</md-button>
       </div>
       <div class="weui-btn-area">
-        <button v-if="!isNew" @click="deleteAllTap" type="warn">删除</button>
+        <md-button class="md-raised md-warn" v-if="!isNew" @click="deleteAllTap">删除</md-button>
       </div>
       <div class="weui-btn-area">
-        <button v-if="!isNew" open-type="share">分享</button>
+        <md-button class="md-raised" v-if="!isNew" open-type="share">分享</md-button>
       </div>
       <div class="weui-btn-area">
-        <button v-if="!isNew" @click="clipboardTap">复制到剪贴板</button>
+        <md-button class="md-raised" v-if="!isNew" @click="clipboardTap">复制到剪贴板</md-button>
       </div>
     </div>
   </div>
 </template>
-<style>
 
+<style>
+  
 </style>
+
 <script>
-export default {
-  data() {
+  import Base64 from "js-base64";
+  export default {
+    data() {
       return {
         visibilities: ['公开', '受保护', '私有'],
         nameLists: [],
         nameList: {},
       };
-  },
-  methods: {
+    },
+    methods: {
       inputTitle: function inputTitle(e) {
         var nameList = this.data.nameList;
         nameList.title = e.detail.value;
@@ -88,12 +91,12 @@ export default {
       },
       saveTap: function saveTap() {
         var nameList = this.data.nameList;
-        nameList.names.filter(function (value) {
+        nameList.names.filter(function(value) {
           return value != '';
         });
         var nameLists = this.data.nameLists;
         if (!this.data.isNew) {
-          nameLists.forEach(function (e, i) {
+          nameLists.forEach(function(e, i) {
             if (e.id == nameList.id) {
               nameLists[i] = nameList;
             }
@@ -104,10 +107,10 @@ export default {
         wx.setStorageSync('nameLists', nameLists);
         wx.navigateBack();
       },
-      deleteAllTap: function deleteAllTap () {
+      deleteAllTap: function deleteAllTap() {
         var nameLists = this.data.nameLists;
         var nameList = this.data.nameList;
-        nameLists.forEach(function (e, i) {
+        nameLists.forEach(function(e, i) {
           if (e.id == nameList.id) {
             nameLists.splice(i, 1);
           }
@@ -119,7 +122,7 @@ export default {
         var b64 = this.toBase64();
         wx.setClipboardData({
           data: b64,
-          success: function (res) {
+          success: function(res) {
             wx.showToast({
               title: '已复制到剪贴板',
               icon: 'success',
@@ -128,45 +131,17 @@ export default {
           },
         });
       },
-      onLoad: function onLoad(options) {
-        var nameLists = wx.getStorageSync('nameLists');
-        var nameList = {};
-        this.setData({
-          nameLists: nameLists,
-        });
-
-        var isNew = (options.isNew === 'true');
-        var id = options.id;
-        if (isNew) {
-          nameList = {
-            id: id,
-            visibility: 0,
-            title: '',
-            names: [''],
-          };
-        } else {
-          nameLists.forEach(function (e, i) {
-            if (e.id === id) {
-              nameList = e;
-            }
-          });
-        }
-        this.setData({
-          nameList: nameList,
-          isNew: isNew,
-        });
-      },
       onReady: function onReady() {
-
+  
       },
       onShareAppMessage: function onShareAppMessage(res) {
         return {
           title: this.data.nameList.title,
           path: '/pages/lists/lists?b64=' + this.toBase64(),
-          success: function (res) {
+          success: function(res) {
             console.log(res);
           },
-          fail: function (res) {
+          fail: function(res) {
             console.log(res);
           },
         };
@@ -177,5 +152,33 @@ export default {
         return b64;
       },
     },
-};
+    mounted: function mounted(options) {
+        const nameLists = JSON.parse(localStorage.getItem('nameLists'));
+        var nameList = {};
+        this.setData({
+          nameLists: nameLists,
+        });
+  
+        var isNew = (options.isNew === 'true');
+        var id = options.id;
+        if (isNew) {
+          nameList = {
+            id: id,
+            visibility: 0,
+            title: '',
+            names: [''],
+          };
+        } else {
+          nameLists.forEach(function(e, i) {
+            if (e.id === id) {
+              nameList = e;
+            }
+          });
+        }
+        this.setData({
+          nameList: nameList,
+          isNew: isNew,
+        });
+      },
+  };
 </script>
