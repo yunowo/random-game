@@ -1,36 +1,38 @@
 <template>
   <page-content page-title="随机">
     <div id="main-content">
-      <div class="page__bd" v-if="!isEmpty">
+      <div class="main-game" v-if="!isEmpty">
   
         <md-card md-with-hover>
-         <md-subheader>参与者</md-subheader>
+          <md-toolbar class="md-transparent">
+            <h1 class="md-title">参与者</h1>
+          </md-toolbar>
+
           <md-card-content>
             <md-input-container>
               <label for="namelists">名单</label>
-              <md-select name="namelists" id="namelists" v-model="nameLists">
-                <md-option v-for="(item, index) in nameLists" :key="item.id" :value="selectedId">{{item.title}}</md-option>
+              <md-select id="namelists" v-model="selectedId">
+                <md-option v-for="(item, index) in nameLists" :key="item.id" :value="item.id">{{item.title}}</md-option>
               </md-select>
             </md-input-container>
-            <md-select name="names" id="names" multiple v-model="arrayFull">
-              <div @click="selectAllTap" class="weui-cell__bd">全选</div>
-              <div @click="clearAllTap" class="weui-cell__bd">清空</div>
-              <md-option v-for="(item, index) in arrayFull" :key="index" :value="arrayFlags[index]">{{item}}</md-option>
+            <md-select id="names" multiple v-model="arraySelected">
+              <md-button @click="selectAllTap">全选</md-button>
+              <md-button @click="clearAllTap">清空</md-button>
+              <md-option v-for="(item, index) in arrayFull" :key="index" :value="item">{{item}}</md-option>
             </md-select>
           </md-card-content>
   
           <div class="card-reservation">
-            <md-icon>access_time</md-icon>
             <md-subheader>选项</md-subheader>
             <md-button-toggle md-single class="md-button-group">
-              <md-button>多次随机</md-button>
-              <md-button>一次随机</md-button>
+              <md-button class="md-toggle" @click="mode = 0">多次随机</md-button>
+              <md-button @click="mode = 1">一次随机</md-button>
             </md-button-toggle>
           </div>
   
           <md-card-actions>
-            <md-button class="md-raised md-warn">重新开始</md-button>
-            <md-button class="md-raised md-primary">随机</md-button>
+            <md-button class="md-raised md-warn" v-if="finished" @click="restartTap">重新开始</md-button>
+            <md-button class="md-raised md-primary" v-if="!finished" @click="randomTap">随机</md-button>
           </md-card-actions>
   
         </md-card>
@@ -51,34 +53,37 @@
           <md-icon>add</md-icon>
         </md-button>
   
-        <div class="weui-cells weui-cells_after-title">
-          <div class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-            <div class="weui-cell__bd longtext_bd">名单</div>
-            <div class="weui-cell__ft weui-cell__ft_in-access longtext_ft">
-              <text>{{nameLists[selected].title}}</text>
-            </div>
-          </div>
-          <div class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-            <div class="weui-cell__bd longtext_bd">参与者</div>
-            <div class="weui-cell__ft weui-cell__ft_in-access longtext_ft">
-              <text>{{arraySelectedString}}</text>
-            </div>
-          </div>
-        </div>
+        <md-table-card md-with-hover>
+          <md-toolbar>
+            <h1 class="md-title">结果</h1>
+            <md-button class="md-icon-button">
+              <md-icon>filter_list</md-icon>
+            </md-button>
   
-        <div class="weui-btn-area">
-          <md-button class="md-raised md-primary" v-if="!finished" type="primary" size="default" @click="randomTap">随机</md-button>
-        </div>
-        <div class="generated-container">
-          <div :class="[generated, {'choosen': max === item}]" v-for="(item, index) in randomized" v-if="item != -1" :key="index">
-            <text class="item-left">{{arraySelected[index]}}</text>
-            <text class="item-center" v-if="mode != 1"> {{item}}</text>
-            <icon class="item-right" type="success" v-if="max === item" />
-          </div>
-        </div>
-        <div class="weui-btn-area">
-          <md-button class="md-raised md-warn" v-if="finished" type="warn" size="default" @click="restartTap">重新开始</md-button>
-        </div>
+            <md-button class="md-icon-button">
+              <md-icon>search</md-icon>
+            </md-button>
+          </md-toolbar>
+  
+          <md-table v-once>
+            <md-table-header>
+              <md-table-row>
+                <md-table-head>名字</md-table-head>
+                <md-table-head md-numeric>结果</md-table-head>
+              </md-table-row>
+            </md-table-header>
+  
+            <md-table-body>
+              <md-table-row :class="['generated', {'choosen': max === item}]" v-for="(item, index) in randomized" :key="index" v-if="item != -1">
+                <md-table-cell>{{arraySelected[index]}}</md-table-cell>
+                <md-table-cell md-numeric v-if="mode != 1">
+                  <md-icon>message</md-icon>
+                  <span>{{item}}</span>
+                </md-table-cell>
+              </md-table-row>
+            </md-table-body>
+          </md-table>
+        </md-table-card>
       </div>
   
       <div class="page" v-if="isEmpty">
@@ -99,6 +104,10 @@
   .md-card {
     width: 400px;
     margin: 20px;
+  }
+  
+  .main-game {
+    display: flex;
   }
   
   .generated-container {
@@ -128,7 +137,7 @@
         selectedId: '',
         selected: 0,
         arrayFull: [],
-        arrayFlags: [],
+        arraySelected: [],
         randomized: [],
         max: 0,
         finished: false,
@@ -137,15 +146,6 @@
     computed: {
       isEmpty() {
         return this.nameLists.length === 0;
-      },
-      arraySelected() {
-        let a = [];
-        this.arrayFlags.forEach((e, i) => {
-          if (e) {
-            a.push(this.arrayFull[i]);
-          }
-        });
-        return a;
       },
       arraySelectedString() {
         return this.arraySelected.join(', ');
@@ -178,7 +178,7 @@
         this.selected = selected;
         this.nameLists = nameLists;
         this.arrayFull = names;
-        this.arrayFlags = Array(names.length).fill(true);
+        this.arraySelected = names;
       },
       namesChange(e) {
         var flags = Array(this.arrayFull.length).fill(false);
@@ -188,12 +188,10 @@
         this.arrayFlags = flags;
       },
       selectAllTap() {
-        var flags = Array(this.arrayFull.length).fill(true);
-        this.arrayFlags = flags;
+        this.arraySelected = this.arrayFull;
       },
       clearAllTap() {
-        var flags = Array(this.arrayFull.length).fill(false);
-        this.arrayFlags = flags;
+        this.arraySelected = [];
       },
       pickerChange(e) {
         this.mode = Number(e.detail.value);
@@ -214,14 +212,12 @@
           this.randomized = r;
           this.max = Math.max(...r);
           this.finished = r.length === this.arraySelected.length;
-  
         } else if (this.mode === 1) {
           r = Array(this.arraySelected.length).fill(-1);
           r[Math.floor(Math.random() * this.arraySelected.length)] = 1;
           this.randomized = r;
           this.max = Math.max(...r);
           this.finished = true;
-  
         }
       },
       restartTap() {
@@ -247,7 +243,7 @@
       this.selectedId = selectedId;
       this.selected = selected;
       this.arrayFull = names;
-      this.arrayFlags = Array(names.length).fill(true);
+      this.arraySelected = names;
     },
   };
 </script>

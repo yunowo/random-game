@@ -26,7 +26,7 @@ const handleSectionTheme = (currentRoute) => {
 
   if (name) {
     if (name === 'game') {
-      theme = 'indigo';
+      theme = 'blue';
     } else if (name === 'lists') {
       theme = 'cyan';
     } else if (name === 'my') {

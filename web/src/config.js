@@ -5,8 +5,8 @@ import 'vue-material/dist/vue-material.css';
 Vue.use(VueMaterial);
 
 Vue.material.registerTheme({
-  game: {
-    primary: 'blue',
+  blue: {
+    primary: 'light-blue',
     accent: 'pink',
   },
   indigo: {

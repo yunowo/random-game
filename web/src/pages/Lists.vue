@@ -4,7 +4,9 @@
       <md-subheader>名单</md-subheader>
       <md-list v-model="nameLists">
         <md-list-item v-for="(item, index) in nameLists" :key="item.id">
-          <md-icon>error</md-icon>
+          <md-avatar class="md-avatar-icon md-primary">
+            <md-icon>folder</md-icon>
+          </md-avatar>
           <div class="md-list-text-container">
             <span>{{item.title}}</span>
             <span>{{item.namesString}}</span>
@@ -40,6 +42,14 @@
               <label>标题</label>
               <md-input required v-model="nameList.title"></md-input>
             </md-input-container>
+            <md-input-container>
+              <label for="visibility">可见性</label>
+              <md-select id="visibility" v-model="nameList.visibility">
+                <md-option :value="0">公开</md-option>
+                <md-option :value="1">受保护</md-option>
+                <md-option :value="2">私有</md-option>
+              </md-select>
+            </md-input-container>
             <md-chips v-model="nameList.names" md-input-placeholder="Add a name"></md-chips>
           </form>
         </md-dialog-content>
@@ -57,126 +67,126 @@
 </template>
 
 <style>
-
+  
 </style>
 
 <script>
-import Base64 from "js-base64";
-import sha1 from "js-sha1";
-export default {
-  data() {
-    return {
-      nameLists: [],
-      state: 0,
-      b64: '',
-      nameList: {
-        title: '',
-        names: []
+  import Base64 from "js-base64";
+  import sha1 from "js-sha1";
+  export default {
+    data() {
+      return {
+        nameLists: [],
+        state: 0,
+        b64: '',
+        nameList: {
+          title: '',
+          names: []
+        },
+      };
+    },
+    methods: {
+      openDialog(ref) {
+        this.$refs[ref].open();
       },
-    };
-  },
-  methods: {
-    openDialog(ref) {
-      this.$refs[ref].open();
-    },
-    closeDialog(ref) {
-      this.$refs[ref].close();
-    },
-    onOpen() {
-      console.log('Opened');
-    },
-    onClose(type) {
-      console.log('Closed', type);
-    },
-    itemTap(e) {
-      wx.navigateTo({
-        url: '../listedit/listedit?isNew=false&id=' + e.currentTarget.id,
-      });
-    },
-    addTap() {
-      wx.navigateTo({
-        url: '../listedit/listedit?isNew=true&id=' + sha1(Date.now().toString()),
-      });
-    },
-    importTap() {
-      this.setData({
-        state: 1,
-      });
-    },
-    input(e) {
-      this.setData({
-        b64: e.detail.value,
-      });
-    },
-    okTap() {
-      var nameList = {};
-      try {
-        var str = this.toStr(this.data.b64);
-        nameList = JSON.parse(str);
-      } catch (e) {
-        this.setData({
-          state: 0,
+      closeDialog(ref) {
+        this.$refs[ref].close();
+      },
+      onOpen() {
+        console.log('Opened');
+      },
+      onClose(type) {
+        console.log('Closed', type);
+      },
+      itemTap(e) {
+        wx.navigateTo({
+          url: '../listedit/listedit?isNew=false&id=' + e.currentTarget.id,
         });
-        console.log(e);
-        return;
-      }
-      var dup = false;
-      var nameLists = this.data.nameLists;
-      nameLists.forEach(function (e, i) {
-        if (e.id == nameList.id) {
+      },
+      addTap() {
+        wx.navigateTo({
+          url: '../listedit/listedit?isNew=true&id=' + sha1(Date.now().toString()),
+        });
+      },
+      importTap() {
+        this.setData({
+          state: 1,
+        });
+      },
+      input(e) {
+        this.setData({
+          b64: e.detail.value,
+        });
+      },
+      okTap() {
+        var nameList = {};
+        try {
+          var str = this.toStr(this.data.b64);
+          nameList = JSON.parse(str);
+        } catch (e) {
+          this.setData({
+            state: 0,
+          });
+          console.log(e);
+          return;
+        }
+        var dup = false;
+        var nameLists = this.data.nameLists;
+        nameLists.forEach(function(e, i) {
+          if (e.id == nameList.id) {
+            wx.showToast({
+              title: '已有该名单',
+              icon: 'success',
+              duration: 2000,
+            });
+            dup = true;
+          }
+        });
+        if (!dup) {
+          nameLists.push(nameList);
+          this.setData({
+            state: 0,
+            nameLists: nameLists,
+          });
+          localStorage.setItem('nameLists', nameLists);
           wx.showToast({
-            title: '已有该名单',
+            title: '已保存 ' + nameList.title,
             icon: 'success',
             duration: 2000,
           });
-          dup = true;
-        }
-      });
-      if (!dup) {
-        nameLists.push(nameList);
-        this.setData({
-          state: 0,
-          nameLists: nameLists,
-        });
-        localStorage.setItem('nameLists', nameLists);
-        wx.showToast({
-          title: '已保存 ' + nameList.title,
-          icon: 'success',
-          duration: 2000,
-        });
-        this.onShow();
-      } else {
-        this.setData({
-          state: 0,
-        });
-      }
-    },
-    onLoad(options) {
-      console.log(options);
-      if (typeof options.b64 !== 'undefined') {
-        try {
-          this.setData({
-            b64: options.b64,
-          });
           this.onShow();
-          this.okTap();
-        } catch (e) {
-          console.log(e);
+        } else {
+          this.setData({
+            state: 0,
+          });
         }
-      }
+      },
+      onLoad(options) {
+        console.log(options);
+        if (typeof options.b64 !== 'undefined') {
+          try {
+            this.setData({
+              b64: options.b64,
+            });
+            this.onShow();
+            this.okTap();
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      },
+      toStr(b64) {
+        var str = Base64.decode(b64);
+        console.log(str);
+        return str;
+      },
     },
-    toStr(b64) {
-      var str = Base64.decode(b64);
-      console.log(str);
-      return str;
+    mounted() {
+      const nameLists = JSON.parse(localStorage.getItem('nameLists'));
+      nameLists.forEach(function(e, i) {
+        e.namesString = e.names.join(', ');
+      });
+      this.nameLists = nameLists;
     },
-  },
-  mounted() {
-    const nameLists = JSON.parse(localStorage.getItem('nameLists'));
-    nameLists.forEach(function (e, i) {
-      e.namesString = e.names.join(', ');
-    });
-    this.nameLists = nameLists;
-  },
-};
+  };
 </script>
