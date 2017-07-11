@@ -62,6 +62,10 @@
         <md-icon>add</md-icon>
       </md-button>
   
+      <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
+        <span>{{message}}</span>
+        <md-button class="md-accent" md-theme="light-blue" @click="$refs.snackbar.close()">Retry</md-button>
+      </md-snackbar>
     </div>
   </page-content>
 </template>
@@ -77,12 +81,12 @@
     data() {
       return {
         nameLists: [],
-        state: 0,
         b64: '',
         nameList: {
           title: '',
           names: []
         },
+        message: "",
       };
     },
     methods: {
@@ -108,25 +112,12 @@
           url: '../listedit/listedit?isNew=true&id=' + sha1(Date.now().toString()),
         });
       },
-      importTap() {
-        this.setData({
-          state: 1,
-        });
-      },
-      input(e) {
-        this.setData({
-          b64: e.detail.value,
-        });
-      },
       okTap() {
         var nameList = {};
         try {
           var str = this.toStr(this.data.b64);
           nameList = JSON.parse(str);
         } catch (e) {
-          this.setData({
-            state: 0,
-          });
           console.log(e);
           return;
         }
@@ -134,40 +125,25 @@
         var nameLists = this.data.nameLists;
         nameLists.forEach(function(e, i) {
           if (e.id == nameList.id) {
-            wx.showToast({
-              title: '已有该名单',
-              icon: 'success',
-              duration: 2000,
-            });
+            this.message = '已有该名单';
+            this.$refs.snackbar.open();
             dup = true;
           }
         });
         if (!dup) {
           nameLists.push(nameList);
-          this.setData({
-            state: 0,
-            nameLists: nameLists,
-          });
-          localStorage.setItem('nameLists', nameLists);
-          wx.showToast({
-            title: '已保存 ' + nameList.title,
-            icon: 'success',
-            duration: 2000,
-          });
+          this.nameLists = nameLists;
+          localStorage.setItem('nameLists', JSON.stringify(nameLists));
+          this.message = '已保存 ' + nameList.title;
+          this.$refs.snackbar.open();
           this.onShow();
-        } else {
-          this.setData({
-            state: 0,
-          });
         }
       },
       onLoad(options) {
         console.log(options);
         if (typeof options.b64 !== 'undefined') {
           try {
-            this.setData({
-              b64: options.b64,
-            });
+            this.b64 = options.b64;
             this.onShow();
             this.okTap();
           } catch (e) {
