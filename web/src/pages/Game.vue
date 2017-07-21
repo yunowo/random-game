@@ -108,6 +108,7 @@
   
   .main-game {
     display: flex;
+    flex-flow: row wrap;
   }
   
   .generated-container {

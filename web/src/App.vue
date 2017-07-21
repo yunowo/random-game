@@ -21,10 +21,6 @@
           <md-list-item>
             <router-link exact to="/my">我的</router-link>
           </md-list-item>
-  
-          <md-list-item>
-            <router-link exact to="/about">About</router-link>
-          </md-list-item>
         </md-list>
       </div>
   
