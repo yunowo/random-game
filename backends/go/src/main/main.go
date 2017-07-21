@@ -1,0 +1,52 @@
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+	"log"
+	"time"
+	"net/http"
+	"os"
+	"os/signal"
+	"context"
+)
+
+type App struct {
+	Engine *gin.Engine
+	DB     *gorm.DB
+}
+
+func main() {
+	//gin.SetMode(gin.ReleaseMode)
+	app := App{}
+	app.initDB()
+	app.Engine = gin.New()
+	r := app.Engine
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+
+	app.configRoutes()
+
+	srv := &http.Server{
+		Addr:    ":7000",
+		Handler: r,
+	}
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			log.Printf("listen: %s\n", err)
+		}
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Println("Shutdown Server ...")
+	app.DB.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server Shutdown:", err)
+	}
+}
