@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <md-sidenav class="main-sidebar md-left md-fixed" md-swipeable ref="main-sidebar">
-      <md-toolbar class="vue-material-logo" md-theme="white">
+      <md-toolbar class="vue-material-logo">
         <router-link exact to="/">
-          <img :src="logo" alt="Vue">
+          <md-icon class="md-size-5x" :md-theme="theme">casino</md-icon>
           <span>随机游戏</span>
         </router-link>
       </md-toolbar>
@@ -33,186 +33,178 @@
 </template>
 
 <style lang="scss">
-  @import "style/variables.scss";
-  $sizebar-size: 280px;
-  [v-cloak] {
-    display: none;
+@import "style/variables.scss";
+$sizebar-size: 280px;
+[v-cloak] {
+  display: none;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+}
+
+.container {
+  min-height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1;
+  transition: $swift-ease-out;
+  @media (min-width: 1281px) {
+    padding-left: $sizebar-size;
   }
-  
-  html,
-  body {
-    height: 100%;
+}
+
+.main-sidebar.md-sidenav {
+  .md-sidenav-content {
+    width: $sizebar-size;
+    display: flex;
+    flex-flow: column;
     overflow: hidden;
-  }
-  
-  body {
-    display: flex;
-  }
-  
-  .container {
-    min-height: 100%;
-    display: flex;
-    flex-flow: column nowrap;
-    flex: 1;
-    transition: $swift-ease-out;
     @media (min-width: 1281px) {
-      padding-left: $sizebar-size;
+      top: 0;
+      pointer-events: auto;
+      transform: translate3d(0, 0, 0) !important;
+      box-shadow: $material-shadow-2dp;
     }
   }
-  
-  .main-sidebar.md-sidenav {
-    .md-sidenav-content {
-      width: $sizebar-size;
+  .md-backdrop {
+    @media (min-width: 1281px) {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+  .md-toolbar {
+    min-height: 172px;
+    border-bottom: 1px solid rgba(#000, .12);
+  }
+  .vue-material-logo {
+    font-size: 24px;
+    a {
+      width: 100%;
       display: flex;
       flex-flow: column;
-      overflow: hidden;
-      @media (min-width: 1281px) {
-        top: 0;
-        pointer-events: auto;
-        transform: translate3d(0, 0, 0) !important;
-        box-shadow: $material-shadow-2dp;
-      }
-    }
-    .md-backdrop {
-      @media (min-width: 1281px) {
-        opacity: 0;
-        pointer-events: none;
-      }
-    }
-    .md-toolbar {
-      min-height: 172px;
-      border-bottom: 1px solid rgba(#000, .12);
-    }
-    .vue-material-logo {
-      font-size: 24px;
-      a {
-        width: 100%;
-        display: flex;
-        flex-flow: column;
-        justify-content: center;
-        align-items: center;
+      justify-content: center;
+      align-items: center;
+      color: inherit;
+      text-decoration: none;
+      &:hover {
         color: inherit;
         text-decoration: none;
-        &:hover {
-          color: inherit;
-          text-decoration: none;
-        }
-      }
-      img {
-        width: 160px;
-        margin-bottom: 16px;
       }
     }
-    .main-sidebar-links {
-      overflow: auto;
-      flex: 1;
-      .md-inset .md-list-item-container {
-        padding-left: 36px;
-      }
-      .md-list-item-container {
-        font-size: 14px;
-        font-weight: 500;
-      }
+    img {
+      width: 160px;
+      margin-bottom: 16px;
     }
   }
-  
-  .main-content {
-    padding: 16px;
-    flex: 1;
+  .main-sidebar-links {
     overflow: auto;
-    background-color: #fff;
-    transform: translate3D(0, 0, 0);
-    transition: $swift-ease-out;
-    transition-delay: .2s;
-  }
-  
-  .md-router-enter,
-  .md-router-leave {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    @media (min-width: 1281px) {
-      left: $sizebar-size;
+    flex: 1;
+    .md-inset .md-list-item-container {
+      padding-left: 36px;
     }
-    .main-content {
-      opacity: 0;
-      overflow: hidden;
+    .md-list-item-container {
+      font-size: 14px;
+      font-weight: 500;
     }
   }
-  
-  .md-router-leave {
-    z-index: 1;
-    transition: $swift-ease-in;
-    transition-duration: .25s;
+}
+
+.main-content {
+  padding: 16px;
+  flex: 1;
+  overflow: auto;
+  background-color: #fff;
+  transform: translate3D(0, 0, 0);
+  transition: $swift-ease-out;
+  transition-delay: .2s;
+}
+
+.md-router-enter,
+.md-router-leave {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  @media (min-width: 1281px) {
+    left: $sizebar-size;
   }
-  
-  .md-router-enter {
-    z-index: 2;
-    transition: $swift-ease-out;
-    .main-content {
-      transform: translate3D(0, 10%, 0);
-    }
-  }
-  
-  code {
-    &:not(.hljs) {
-      margin-left: 1px;
-      margin-right: 1px;
-      padding: 0 4px;
-      display: inline-block;
-      border-radius: 2px;
-      font-family: "Operator Mono", "Fira Code", Menlo, Hack, "Roboto Mono", "Liberation Mono", Monaco, monospace;
-      pre {
-        margin: 8px 0;
-      }
-    }
-  }
-  
-  .phone-viewport {
-    width: 360px;
-    height: 540px;
-    margin-right: 16px;
-    display: inline-block;
-    position: relative;
+  .main-content {
+    opacity: 0;
     overflow: hidden;
-    background-color: #fff;
-    border: 1px solid rgba(#000, .12);
   }
-  
-  .api-table tr>td:first-child {
-    white-space: nowrap;
+}
+
+.md-router-leave {
+  z-index: 1;
+  transition: $swift-ease-in;
+  transition-duration: .25s;
+}
+
+.md-router-enter {
+  z-index: 2;
+  transition: $swift-ease-out;
+  .main-content {
+    transform: translate3D(0, 10%, 0);
   }
+}
+
+code {
+  &:not(.hljs) {
+    margin-left: 1px;
+    margin-right: 1px;
+    padding: 0 4px;
+    display: inline-block;
+    border-radius: 2px;
+    font-family: "Operator Mono", "Fira Code", Menlo, Hack, "Roboto Mono", "Liberation Mono", Monaco, monospace;
+    pre {
+      margin: 8px 0;
+    }
+  }
+}
+
+.phone-viewport {
+  width: 360px;
+  height: 540px;
+  margin-right: 16px;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid rgba(#000, .12);
+}
+
+.api-table tr>td:first-child {
+  white-space: nowrap;
+}
 </style>
 
 <script>
-  import Vue from 'vue';
-  
-  export default {
-    data() {
-      return {
+import Vue from 'vue';
+
+export default {
+  data() {
+    return {
       toolbar: true,
-      theme: 'game',
+      theme: 'blue',
       pageTitle: '',
-      };
+    };
+  },
+  computed: {},
+  methods: {
+    toggleSidenav() {
+      this.$refs['main-sidebar'].toggle();
     },
-    computed: {
-      logo() {
-        const theme = Vue.material.currentTheme;
-        if (theme) {
-          return `static/img/logo-vue-material-${theme}.png`;
-        }
-        return 'static/img/logo-vue-material-default.png';
-      },
+    closeSidenav() {
+      this.$refs['main-sidebar'].close();
     },
-    methods: {
-      toggleSidenav() {
-        this.$refs['main-sidebar'].toggle();
-      },
-      closeSidenav() {
-        this.$refs['main-sidebar'].close();
-      },
-    },
-    mounted() {},
-  };
+  },
+  mounted() { },
+};
 </script>

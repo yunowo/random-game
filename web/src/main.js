@@ -1,9 +1,8 @@
 import Vue from 'vue';
+import axios from 'axios';
+
 import App from './App';
 import router from './router';
-// import 'babel-polyfill';
-// require('es6-promise').polyfill();
-
 import './config';
 
 import Hello from './components/Hello';
@@ -66,3 +65,6 @@ router.afterEach((to) => {
 
 localStorage.setItem('selectedId', '9e94e871bc75fab604f3c7872501c7ad07b3d87f');
 localStorage.setItem('nameLists', JSON.stringify([{ id: '9e94e871bc75fab604f3c7872501c7ad07b3d87f', visibility: 0, title: 'NotB515', names: ['WildHunter', 'PrinceRedMoon', 'SymPy', 'Robert Z', 'Yun', 'Personal_GH'], namesString: 'WildHunter, PrinceRedMoon, SymPy, Robert Z, Yun, Personal_GH' }]));
+
+// axios.defaults.baseURL = 'https://api.liuyun.me/random';
+axios.defaults.baseURL = 'http://localhost:7000/random';
