@@ -1,40 +1,46 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
-	"github.com/zalando/gin-oauth2/github"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/go-github/github"
+	githuboauth "github.com/zalando/gin-oauth2/github"
 )
 
 func (app *App) configRoutes() {
 	r := app.Engine
 
 	secret := []byte("a secret")
-	scopes := []string{"repo", "user:email", }
-	sessionName := "randomgosession"
-	github.Setup(RedirectURL, ConfigFile, scopes, secret)
+	scopes := []string{"user:email", }
+	sessionName := "session"
+	githuboauth.Setup(RedirectURL, ConfigFile, scopes, secret)
 
-	r.Use(github.Session(sessionName))
-	r.POST("/random/login", github.LoginHandler)
+	r.Use(githuboauth.Session(sessionName))
+	r.GET("/random/login", githuboauth.LoginHandler)
 
 	random := r.Group("/random")
-	random.Use(github.Auth())
+	random.Use(githuboauth.Auth())
 	{
-		random.GET("/auth",app.auth)
+		random.GET("/auth", app.auth)
 
 		random.GET("/namelist/:id", app.getNameList)
 		random.POST("/namelist", app.createNameList)
 		random.PATCH("/namelist/:id", app.updateNameList)
 
-		random.GET("/user/:id", app.getUser)
-		random.PATCH("/user/:id", app.updateUser)
-		random.PATCH("/user/:id/relationships/namelists", app.updateUserNameLists)
+		random.GET("/user", app.getUser)
+		random.PATCH("/user", app.updateUser)
+		random.PATCH("/user/import", app.updateUserNameLists)
 	}
 }
 
 func (app *App) auth(c *gin.Context) {
-
+	info := c.MustGet("user").(*github.User)
+	user := User{}
+	app.DB.Where(User{GitHubId: *info.ID}).Attrs(User{Model: Model{CreatedAt: time.Now()}, Name: *info.Name}).FirstOrCreate(&user)
+	c.Redirect(http.StatusTemporaryRedirect, "/")
+	//c.JSON(http.StatusOK, gin.H{"user": c.MustGet("user")})
 }
 
 func (app *App) getNameList(c *gin.Context) {
@@ -68,7 +74,8 @@ func (app *App) updateNameList(c *gin.Context) {
 }
 
 func (app *App) getUser(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	//id, _ := strconv.Atoi(c.Param("id"))
+	id := c.MustGet("user").(*github.User).ID
 	var user User
 	var nameLists []NameList
 	if err := app.DB.First(&user, id).Error; err == nil {
@@ -81,8 +88,13 @@ func (app *App) getUser(c *gin.Context) {
 }
 
 func (app *App) updateUser(c *gin.Context) {
+	id := c.MustGet("user").(*github.User).ID
 	var json User
 	if c.BindJSON(&json) == nil {
+		if *id != json.ID {
+			responseForbidden(c)
+			return
+		}
 		app.DB.Model(&json).Update(&json)
 		responseOK(c, json)
 	} else {
@@ -109,5 +121,9 @@ func responseBadRequest(c *gin.Context) {
 }
 
 func responseUnauthorized(c *gin.Context) {
-	c.JSON(http.StatusBadRequest, Response{nil, gin.H{"status": "Unauthorized"}, nil})
+	c.JSON(http.StatusUnauthorized, Response{nil, gin.H{"status": "Unauthorized"}, nil})
+}
+
+func responseForbidden(c *gin.Context) {
+	c.JSON(http.StatusForbidden, Response{nil, gin.H{"status": "Forbidden"}, nil})
 }
