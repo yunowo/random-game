@@ -54,10 +54,14 @@
   </page-content>
 </template>
 
-<style>
+<style lang="scss">
 .md-card {
   width: 400px;
   margin: 20px;
+}
+
+.md-with-hover {
+  cursor: default !important;
 }
 
 .main-my {

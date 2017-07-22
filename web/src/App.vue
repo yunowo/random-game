@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <md-sidenav class="main-sidebar md-left md-fixed" md-swipeable ref="main-sidebar">
-      <md-toolbar class="vue-material-logo">
+      <md-toolbar>
         <router-link exact to="/">
-          <md-icon class="md-size-5x" :md-theme="theme">casino</md-icon>
+          <md-icon class="md-size-5x md-primary">casino</md-icon>
           <span>随机游戏</span>
         </router-link>
       </md-toolbar>
@@ -82,8 +82,7 @@ body {
   .md-toolbar {
     min-height: 172px;
     border-bottom: 1px solid rgba(#000, .12);
-  }
-  .vue-material-logo {
+    background-color: #fff;
     font-size: 24px;
     a {
       width: 100%;
@@ -93,6 +92,7 @@ body {
       align-items: center;
       color: inherit;
       text-decoration: none;
+      user-select: none;
       &:hover {
         color: inherit;
         text-decoration: none;
@@ -192,7 +192,6 @@ export default {
   data() {
     return {
       toolbar: true,
-      theme: 'blue',
       pageTitle: '',
     };
   },

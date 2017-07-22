@@ -20,7 +20,7 @@ new Vue({
 
 let Docs = Vue.component('app', App);
 const handleSectionTheme = (currentRoute) => {
-  let theme = 'game';
+  let theme = 'blue';
   const name = currentRoute.name;
 
   if (name) {

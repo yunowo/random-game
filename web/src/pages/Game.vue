@@ -86,6 +86,10 @@
   margin: 20px;
 }
 
+.md-with-hover {
+  cursor: default !important;
+}
+
 .main-game {
   display: flex;
   flex-flow: row wrap;

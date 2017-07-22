@@ -117,13 +117,13 @@
               <label>标题</label>
               <md-input required v-model="nameList.title"></md-input>
             </md-input-container>
-            <md-input-container>
-              <label for="visibility">可见性</label>
-              <md-select id="visibility" v-model="nameList.visibility">
-                <md-option :value="0">公开</md-option>
-                <md-option :value="1">私有</md-option>
-              </md-select>
-            </md-input-container>
+            <div class="fork-select">
+              <md-icon>security</md-icon>
+              <md-button-toggle md-single class="md-button-group">
+                <md-button class="md-toggle" @click="nameList.visibility = 0">公开</md-button>
+                <md-button @click="nameList.visibility = 1">私有</md-button>
+              </md-button-toggle>
+            </div>
             <md-chips v-model="nameList.names" md-input-placeholder="Add a name"></md-chips>
           </form>
         </md-dialog-content>
@@ -203,6 +203,7 @@ export default {
       fork: false,
       nameList: {
         title: '',
+        visibility: 0,
         names: []
       },
       message: "",
