@@ -8,7 +8,7 @@
       <md-list v-model="nameLists">
         <md-list-item v-for="(item, index) in nameLists" :key="item.id" @click="itemTap">
           <md-avatar class="md-avatar-icon md-primary">
-            <md-icon>folder</md-icon>
+            <md-icon>ac_unit</md-icon>
           </md-avatar>
           <div class="md-list-text-container">
             <span>{{item.title}}</span>
@@ -44,17 +44,18 @@
       </md-speed-dial>
   
       <md-dialog md-open-from="#fab" md-close-to="#fab" ref="dialog-import">
-        <md-dialog-content>
+        <md-dialog-content class="dense">
           <h3 class="md-title">导入名单</h3>
           <md-tabs md-right class="md-transparent title-tabs">
             <md-tab id="tab-id" md-icon="insert_link" md-label="ID" md-active>
               <form>
                 <md-input-container>
                   <label>ID</label>
-                  <md-textarea maxlength="20" required v-model="nid"></md-textarea>
+                  <md-textarea maxlength="20" required v-model="nameList.id"></md-textarea>
                 </md-input-container>
                 <div class="fork-select">
-                  <md-icon>ac_unit</md-icon>
+                  <md-icon v-if="fork === false">cloud</md-icon>
+                  <md-icon v-if="fork === true">cloud_queue</md-icon>
                   <md-button-toggle md-single class="md-button-group">
                     <md-button class="md-toggle" @click="fork = false">Clone</md-button>
                     <md-button @click="fork = true">Fork</md-button>
@@ -79,14 +80,14 @@
       </md-dialog>
   
       <md-dialog md-open-from="#fab" md-close-to="#fab" ref="dialog-share">
-        <md-dialog-content>
+        <md-dialog-content class="dense">
           <h3 class="md-title">分享名单</h3>
           <md-tabs md-right class="md-transparent title-tabs">
             <md-tab id="tab-id" md-icon="insert_link" md-label="ID" md-active>
               <form>
                 <md-input-container>
                   <label>ID</label>
-                  <md-textarea maxlength="20" required v-model="nid"></md-textarea>
+                  <md-textarea maxlength="20" required v-model="nameList.id"></md-textarea>
                 </md-input-container>
               </form>
             </md-tab>
@@ -104,14 +105,14 @@
           </md-tabs>
         </md-dialog-content>
         <md-dialog-actions>
-          <md-button class="md-primary" @click="closeDialog('dialog-share')">取消</md-button>
-          <md-button class="md-primary" @click="closeDialog('dialog-share')">导入</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog-share')">关闭</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog-share')">复制到剪贴板</md-button>
         </md-dialog-actions>
       </md-dialog>
   
       <md-dialog md-open-from="#fab" md-close-to="#fab" ref="dialog-create">
-        <md-dialog-title>Create new note</md-dialog-title>
-        <md-dialog-content>
+        <md-dialog-title class="dense">创建新名单</md-dialog-title>
+        <md-dialog-content class="dense">
           <form>
             <md-input-container>
               <label>标题</label>
@@ -189,6 +190,14 @@
     margin-left: 8px;
   }
 }
+
+.md-dialog-title.dense {
+  margin-bottom: 0px !important;
+}
+
+.md-dialog-content.dense {
+  padding-bottom: 0px !important;
+}
 </style>
 
 <script>
@@ -198,10 +207,10 @@ export default {
   data() {
     return {
       nameLists: [],
-      nid: 0,
       b64: '',
       fork: false,
       nameList: {
+        id: 0,
         title: '',
         visibility: 1,
         names: []
