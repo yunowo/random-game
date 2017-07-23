@@ -14,7 +14,7 @@
             <span>{{item.title}}</span>
             <span>{{item.names.join(', ')}}</span>
           </div>
-          <md-button class="md-icon-button" @click="openDialog('dialog-create', item)">
+          <md-button class="md-icon-button" @click="openDialog('dialog-create', item, true)">
             <md-icon>mode_edit</md-icon>
             <md-tooltip md-direction="top">编辑</md-tooltip>
           </md-button>
@@ -74,8 +74,8 @@
           </md-tabs>
         </md-dialog-content>
         <md-dialog-actions>
-          <md-button class="md-primary" @click="closeDialog('dialog-import')">取消</md-button>
-          <md-button class="md-primary" @click="closeDialog('dialog-import')">导入</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog-import', false)">取消</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog-import', true)">导入</md-button>
         </md-dialog-actions>
       </md-dialog>
   
@@ -100,18 +100,18 @@
               </form>
             </md-tab>
             <md-tab id="tab-qr" md-icon="select_all" md-label="QR">
-              <vue-qr id="qrcode" bgSrc="/static/img/qr_background.jpg" text="Hello world!" height="200" width="200" v-if="share"></vue-qr>
+              <vue-qr id="qrcode" bgSrc="/static/img/qr_background.jpg" text="Hello world!" height="200" width="200" v-if="mode === 'share'"></vue-qr>
             </md-tab>
           </md-tabs>
         </md-dialog-content>
         <md-dialog-actions>
-          <md-button class="md-primary" @click="closeDialog('dialog-share')">关闭</md-button>
-          <md-button class="md-primary" @click="closeDialog('dialog-share')">复制到剪贴板</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog-share', false)">关闭</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog-share', true)">复制到剪贴板</md-button>
         </md-dialog-actions>
       </md-dialog>
   
       <md-dialog md-open-from="#fab" md-close-to="#fab" ref="dialog-create">
-        <md-dialog-title class="dense">创建新名单</md-dialog-title>
+        <md-dialog-title class="dense">{{mode === 'create' ? '创建新名单' : '编辑名单'}}</md-dialog-title>
         <md-dialog-content class="dense">
           <form>
             <md-input-container>
@@ -129,8 +129,8 @@
           </form>
         </md-dialog-content>
         <md-dialog-actions>
-          <md-button class="md-primary" @click="closeDialog('dialog-create')">取消</md-button>
-          <md-button class="md-primary" @click="closeDialog('dialog-create')">创建</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog-create', false)">取消</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog-create', true)">创建</md-button>
         </md-dialog-actions>
       </md-dialog>
   
@@ -210,39 +210,69 @@
 </style>
 
 <script>
-import sha1 from "js-sha1";
-import AwesomeQRCode from "awesome-qr";
+import axios from 'axios';
 export default {
   data() {
     return {
       nameLists: [],
       b64: '',
       fork: false,
-      nameList: {
-        id: 0,
+      nameList: {},
+      newNameList: {
+        id: null,
         title: '',
         visibility: 1,
         names: []
       },
       message: "",
-      share: false,
-      importMode: 0,
+      mode: 'create',
     };
   },
   computed: {
 
   },
   methods: {
-    openDialog(ref, nameList) {
+    openDialog(ref, nameList, edit) {
       this.$refs[ref].open();
-      this.share = true;
-      this.nameList = nameList;
       if (ref === 'dialog-share') {
+        this.mode = 'share';
+        this.nameList = nameList;
         this.b64 = this.tob64();
       }
+      else if (ref === 'dialog-create' && edit) {
+        this.mode = 'edit';
+        this.nameList = nameList;
+      } else if (ref === 'dialog-create' && !edit) {
+        this.mode = 'create';
+        this.nameList = this.newNameList;
+        this.b64 = "";
+      } else if (ref === 'dialog-import') {
+        this.mode = 'import';
+        this.nameList = this.newNameList;
+        this.b64 = "";
+      }
     },
-    closeDialog(ref) {
+    closeDialog(ref, ok) {
       this.$refs[ref].close();
+      if (!ok) return;
+      switch (this.mode) {
+        case 'create': {
+          this.add();
+          break;
+        }
+        case 'edit': {
+          this.add();
+          break;
+        }
+        case 'share': {
+
+          break;
+        }
+        case 'import': {
+          this.import();
+          break;
+        }
+      }
     },
     itemTap(e) {
       wx.navigateTo({
@@ -341,6 +371,7 @@ export default {
   mounted() {
     const nameLists = JSON.parse(localStorage.getItem('nameLists'));
     this.nameLists = nameLists;
+    this.nameList = this.newNameList;
   },
 };
 </script>

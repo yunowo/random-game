@@ -70,3 +70,4 @@ localStorage.setItem('nameLists', JSON.stringify([{ id: 1, visibility: 0, title:
 
 // axios.defaults.baseURL = 'https://api.liuyun.me/random';
 axios.defaults.baseURL = 'http://localhost:7000/random';
+axios.defaults.withCredentials = true;
