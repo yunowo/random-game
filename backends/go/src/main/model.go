@@ -29,6 +29,7 @@ type NameList struct {
 	Names      pq.StringArray `json:"names" gorm:"type:varchar(100)[]"`
 	Visibility int            `json:"visibility"`
 	Users      []User         `json:"-" gorm:"many2many:user_name_lists"`
+	Creator    User           `json:"creator"`
 }
 
 type Response struct {
