@@ -37,7 +37,7 @@
   
           <md-card-actions>
             <md-button class="md-warn" v-if="finished" @click="restartTap">重新开始</md-button>
-            <md-button class="md-primary" v-if="!finished" @click="randomTap">随机</md-button>
+            <md-button class="md-primary" v-else @click="randomTap">随机</md-button>
           </md-card-actions>
   
         </md-card>
@@ -68,7 +68,7 @@
         </md-table-card>
       </div>
   
-      <div class="page" v-if="isEmpty">
+      <div class="page" v-else>
         <div class="weui-msg">
           <md-icon class="md-accent md-size-4x"></md-icon>
           <div class="weui-msg__text-area">

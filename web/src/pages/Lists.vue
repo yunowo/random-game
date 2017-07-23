@@ -14,15 +14,15 @@
             <span>{{item.title}}</span>
             <span>{{item.names.join(', ')}}</span>
           </div>
-          <md-button class="md-icon-button" @click="openDialog('dialog-share')">
-            <md-icon>share</md-icon>
-            <md-tooltip md-direction="top">分享</md-tooltip>
-          </md-button>
-          <md-button class="md-icon-button" @click="openDialog('dialog-create')">
+          <md-button class="md-icon-button" @click="openDialog('dialog-create', item)">
             <md-icon>mode_edit</md-icon>
             <md-tooltip md-direction="top">编辑</md-tooltip>
           </md-button>
-          <md-button class="md-icon-button" @click="openDialog('dialog-delete')">
+          <md-button class="md-icon-button" @click="openDialog('dialog-share', item)">
+            <md-icon>share</md-icon>
+            <md-tooltip md-direction="top">分享</md-tooltip>
+          </md-button>
+          <md-button class="md-icon-button" @click="openDialog('dialog-delete', item)">
             <md-icon>delete</md-icon>
             <md-tooltip md-direction="top">删除</md-tooltip>
           </md-button>
@@ -46,16 +46,16 @@
       <md-dialog md-open-from="#fab" md-close-to="#fab" ref="dialog-import">
         <md-dialog-content class="dense">
           <h3 class="md-title">导入名单</h3>
-          <md-tabs md-right class="md-transparent title-tabs">
+          <md-tabs md-right class="md-transparent title-tabs" ref="import-tabs">
             <md-tab id="tab-id" md-icon="insert_link" md-label="ID" md-active>
               <form>
-                <md-input-container>
+                <md-input-container md-clearable>
                   <label>ID</label>
-                  <md-textarea maxlength="20" required v-model="nameList.id"></md-textarea>
+                  <md-input maxlength="20" required v-model="nameList.id"></md-input>
                 </md-input-container>
                 <div class="fork-select">
                   <md-icon v-if="fork === false">cloud</md-icon>
-                  <md-icon v-if="fork === true">cloud_queue</md-icon>
+                  <md-icon v-else>cloud_queue</md-icon>
                   <md-button-toggle md-single class="md-button-group">
                     <md-button class="md-toggle" @click="fork = false">Clone</md-button>
                     <md-button @click="fork = true">Fork</md-button>
@@ -65,7 +65,7 @@
             </md-tab>
             <md-tab id="tab-base64" md-icon="content_paste" md-label="Base64">
               <form>
-                <md-input-container>
+                <md-input-container md-clearable>
                   <label>Base64</label>
                   <md-textarea maxlength="10000" required v-model="b64"></md-textarea>
                 </md-input-container>
@@ -87,7 +87,7 @@
               <form>
                 <md-input-container>
                   <label>ID</label>
-                  <md-textarea maxlength="20" required v-model="nameList.id"></md-textarea>
+                  <md-input maxlength="20" required v-model="nameList.id"></md-input>
                 </md-input-container>
               </form>
             </md-tab>
@@ -100,7 +100,7 @@
               </form>
             </md-tab>
             <md-tab id="tab-qr" md-icon="select_all" md-label="QR">
-  
+              <vue-qr id="qrcode" bgSrc="/static/img/qr_background.jpg" text="Hello world!" height="200" width="200" v-if="share"></vue-qr>
             </md-tab>
           </md-tabs>
         </md-dialog-content>
@@ -134,7 +134,7 @@
         </md-dialog-actions>
       </md-dialog>
   
-      <md-dialog-confirm md-title="确认删除?" md-content-html="真的要删除这个名单吗?" md-ok-text="确定" md-cancel-text="取消" @open="onOpen" @close="onClose" ref="dialog-delete">
+      <md-dialog-confirm md-title="确认删除?" md-content-html="真的要删除这个名单吗?" md-ok-text="确定" md-cancel-text="取消" @open="remove" ref="dialog-delete">
       </md-dialog-confirm>
   
       <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
@@ -191,6 +191,10 @@
   }
 }
 
+.md-dialog {
+  max-width: 360px;
+}
+
 .md-dialog-title.dense {
   margin-bottom: 0px !important;
 }
@@ -198,11 +202,16 @@
 .md-dialog-content.dense {
   padding-bottom: 0px !important;
 }
+
+#qrcode {
+  display: flex;
+  justify-content: center;
+}
 </style>
 
 <script>
-import Base64 from "js-base64";
 import sha1 from "js-sha1";
+import AwesomeQRCode from "awesome-qr";
 export default {
   data() {
     return {
@@ -216,23 +225,24 @@ export default {
         names: []
       },
       message: "",
+      share: false,
+      importMode: 0,
     };
   },
   computed: {
 
   },
   methods: {
-    openDialog(ref) {
+    openDialog(ref, nameList) {
       this.$refs[ref].open();
+      this.share = true;
+      this.nameList = nameList;
+      if (ref === 'dialog-share') {
+        this.b64 = this.tob64();
+      }
     },
     closeDialog(ref) {
       this.$refs[ref].close();
-    },
-    onOpen() {
-      console.log('Opened');
-    },
-    onClose(type) {
-      console.log('Closed', type);
     },
     itemTap(e) {
       wx.navigateTo({
@@ -244,54 +254,66 @@ export default {
         data: {
           data: this.nameList
         }
-      })
-        .then(response => {
-          console.log(response);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      }).then(response => {
+        console.log(response);
+        this.refresh();
+      }).catch(error => {
+        console.log(error);
+      });
     },
     import() {
-      axios.post('/user/import', {
-        params: {
-          id: 0,
-          fork: false,
-        }
-      })
-        .then(response => {
-          console.log(response);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-    okTap() {
-      var nameList = {};
-      try {
-        var str = this.toStr(this.data.b64);
-        nameList = JSON.parse(str);
-      } catch (e) {
-        console.log(e);
-        return;
+      let tab = this.$refs['import-tabs'].activeTabNumber;
+      if (tab === 1) {
+        let json = JSON.parse(this.b64tostr(this.data.b64));
+        this.nameList = json;
       }
-      var dup = false;
-      var nameLists = this.data.nameLists;
-      nameLists.forEach((e, i) => {
-        if (e.id == nameList.id) {
+
+      let dup = false;
+      this.nameLists.forEach((e, i) => {
+        if (e.id == this.nameList.id) {
           this.message = '已有该名单';
           this.$refs.snackbar.open();
           dup = true;
         }
       });
-      if (!dup) {
-        nameLists.push(nameList);
-        this.nameLists = nameLists;
-        localStorage.setItem('nameLists', JSON.stringify(nameLists));
-        this.message = '已保存 ' + nameList.title;
-        this.$refs.snackbar.open();
-        this.onShow();
+      if (dup) return;
+
+      if (tab === 0) {
+        axios.post('/user/import', {
+          params: {
+            id: this.nameList.id,
+            fork: this.fork,
+          }
+        }).then(response => {
+          console.log(response);
+          this.refresh();
+        }).catch(error => {
+          console.log(error);
+        });
+      } else {
+        this.nameList.id = null;
+        this.add();
       }
+    },
+    remove() {
+      axios.post('/user/remove', {
+        params: {
+          id: this.nameList.id,
+        }
+      }).then(response => {
+        console.log(response);
+        this.refresh();
+      }).catch(error => {
+        console.log(error);
+      });
+    },
+    refresh() {
+      axios.get('/user').then(response => {
+        console.log(response);
+        localStorage.setItem('nameLists', response.data);
+      }).catch(error => {
+        console.log(error);
+      });
     },
     onLoad(options) {
       console.log(options);
@@ -305,10 +327,15 @@ export default {
         }
       }
     },
-    toStr(b64) {
-      var str = Base64.decode(b64);
+    b64tostr(b64) {
+      let str = atob(b64);
       console.log(str);
       return str;
+    },
+    tob64() {
+      let b64 = btoa(JSON.stringify(this.nameList));
+      console.log(b64);
+      return b64;
     },
   },
   mounted() {
