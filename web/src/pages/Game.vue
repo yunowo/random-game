@@ -3,7 +3,7 @@
     <div id="main-content">
       <div class="main-game" v-if="!isEmpty">
   
-        <md-card md-with-hover>
+        <md-card md-with-hover id="card-select">
           <md-toolbar class="md-transparent">
             <h1 class="md-title">参与者</h1>
           </md-toolbar>
@@ -17,8 +17,10 @@
             </md-input-container>
             <md-input-container>
               <md-select id="names" multiple v-model="arraySelected">
-                <md-button @click="selectAllTap">全选</md-button>
-                <md-button @click="clearAllTap">清空</md-button>
+                <div style="display: flex">
+                  <md-button @click="selectAll">全选</md-button>
+                  <md-button @click="clearAll">清空</md-button>
+                </div>
                 <md-option v-for="(item, index) in arrayFull" :key="index" :value="item">{{item}}</md-option>
               </md-select>
             </md-input-container>
@@ -27,8 +29,8 @@
             <div class="mode-select">
               <md-icon>toys</md-icon>
               <md-button-toggle md-single class="md-button-group">
-                <md-button class="md-toggle" @click="mode = 0">多次随机</md-button>
-                <md-button @click="mode = 1">一次随机</md-button>
+                <md-button class="md-toggle" @click="modeChange(0)">多次随机</md-button>
+                <md-button @click="modeChange(1)">一次随机</md-button>
               </md-button-toggle>
             </div>
           </md-card-content>
@@ -40,7 +42,7 @@
   
         </md-card>
   
-        <md-table-card md-with-hover>
+        <md-table-card md-with-hover v-if="randomized.length !== 0">
           <md-card-header>
             <div class="md-title">结果</div>
           </md-card-header>
@@ -84,6 +86,10 @@
 .md-card {
   width: 400px;
   margin: 20px;
+}
+
+#card-select {
+  max-height: 368px;
 }
 
 .md-with-hover {
@@ -195,14 +201,14 @@ export default {
       });
       this.arrayFlags = flags;
     },
-    selectAllTap() {
+    selectAll() {
       this.arraySelected = this.arrayFull;
     },
-    clearAllTap() {
+    clearAll() {
       this.arraySelected = [];
     },
-    pickerChange(e) {
-      this.mode = Number(e.detail.value);
+    modeChange(mode) {
+      this.mode = mode;
       this.restartTap();
     },
     OKTap() {

@@ -120,8 +120,8 @@
             <div class="fork-select">
               <md-icon>security</md-icon>
               <md-button-toggle md-single class="md-button-group">
-                <md-button class="md-toggle" @click="nameList.visibility = 0">公开</md-button>
-                <md-button @click="nameList.visibility = 1">私有</md-button>
+                <md-button @click="nameList.visibility = 0">公开</md-button>
+                <md-button class="md-toggle" @click="nameList.visibility = 1">私有</md-button>
               </md-button-toggle>
             </div>
             <md-chips v-model="nameList.names" md-input-placeholder="Add a name"></md-chips>
@@ -203,7 +203,7 @@ export default {
       fork: false,
       nameList: {
         title: '',
-        visibility: 0,
+        visibility: 1,
         names: []
       },
       message: "",
