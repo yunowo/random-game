@@ -59,6 +59,9 @@ func (app *App) check() gin.HandlerFunc {
 
 		var user User
 		if app.DB.First(&user, userID).Error == nil {
+			var nameLists []NameList
+			app.DB.Model(&user).Related(&nameLists, "NameLists")
+			user.NameLists = nameLists
 			c.Set("user", user)
 		} else {
 			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid user %s", userID))

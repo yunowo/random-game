@@ -26,8 +26,17 @@ func (app *App) createNameList(c *gin.Context) {
 			badRequest(c)
 		}
 		nameList.Creator = user
-		app.DB.Set("gorm:insert_option", "ON CONFLICT (id) DO NOTHING").Create(&nameList)
-		ok(c, nameList)
+
+		tx := app.DB.Begin()
+		tx.Set("gorm:insert_option", "ON CONFLICT (id) DO NOTHING").Create(&nameList)
+		tx.Exec("INSERT INTO user_name_lists (user_id, name_list_id) VALUES (?, ?)", user.ID, nameList.ID)
+		if tx.Error == nil {
+			tx.Commit()
+			ok(c, nameList)
+		} else {
+			tx.Rollback()
+			badRequest(c)
+		}
 	} else {
 		badRequest(c)
 	}
@@ -46,13 +55,7 @@ func (app *App) updateNameList(c *gin.Context) {
 
 func (app *App) getUser(c *gin.Context) {
 	user := c.MustGet("user").(User)
-	var nameLists []NameList
-	if err := app.DB.Model(&user).Related(&nameLists, "NameLists").Error; err == nil {
-		user.NameLists = nameLists
-		ok(c, user)
-	} else {
-		badRequest(c)
-	}
+	ok(c, user)
 }
 
 // params: id int, fork bool
@@ -67,7 +70,7 @@ func (app *App) importNameList(c *gin.Context) {
 			nameList.ID = -1
 			tx.Create(&nameList)
 		}
-		tx.Model(&user).Update(map[string]interface{}{"NameLists": append(user.NameLists, nameList)})
+		tx.Exec("INSERT INTO user_name_lists (user_id, name_list_id) VALUES (?, ?)", user.ID, nameList.ID)
 		if tx.Error == nil {
 			tx.Commit()
 			ok(c, user)
@@ -83,14 +86,8 @@ func (app *App) importNameList(c *gin.Context) {
 func (app *App) removeNameList(c *gin.Context) {
 	user := c.MustGet("user").(User)
 	nid, err := strconv.Atoi(c.Param("id"))
-	if app.DB.Error == nil && err != nil {
-		n := user.NameLists[:0]
-		for _, x := range user.NameLists {
-			if x.ID != nid {
-				n = append(n, x)
-			}
-		}
-		app.DB.Model(&user).Update(map[string]interface{}{"NameLists": n})
+	if err != nil {
+		app.DB.Exec("DELETE FROM user_name_lists WHERE user_id = ? AND name_list_id = ?", user.ID, nid)
 		if app.DB.Error == nil {
 			ok(c, user)
 		} else {
