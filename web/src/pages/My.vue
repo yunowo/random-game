@@ -78,6 +78,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      loggedin: true,
       message: "",
       user: {
         id: 0,
@@ -88,7 +89,8 @@ export default {
     };
   }, methods: {
     login() {
-
+      let api = axios.defaults.baseURL;
+      window.location.replace(api + '/login');
     },
     sync() {
       axios.get('/user').then(response => {

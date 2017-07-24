@@ -305,18 +305,19 @@ export default {
     import() {
       let tab = this.$refs['import-tabs'].activeTabNumber;
       if (tab === 1) {
-        let json = JSON.parse(this.b64tostr(this.data.b64));
+        let json = JSON.parse(this.b64tostr(this.b64));
         this.nameList = json;
       }
 
       let dup = false;
-      this.user.name_lists.forEach((e, i) => {
-        if (e.id == this.nameList.id) {
-          this.message = '已有该名单';
-          this.$refs.snackbar.open();
-          dup = true;
-        }
-      });
+      if (this.user.name_lists !== null)
+        this.user.name_lists.forEach((e, i) => {
+          if (e.id == this.nameList.id) {
+            this.message = '已有该名单';
+            this.$refs.snackbar.open();
+            dup = true;
+          }
+        });
       if (dup) return;
 
       if (tab === 0) {
@@ -336,8 +337,7 @@ export default {
       }
     },
     remove(type) {
-      console.log(type);
-
+      if (type === 'cancel') return;
       let params = new URLSearchParams();
       params.append('id', this.nameList.id);
       axios.post('/user/remove', params)

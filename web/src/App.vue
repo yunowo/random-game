@@ -15,7 +15,7 @@
           </md-list-item>
   
           <md-list-item>
-            <router-link exact to="/lists">列表</router-link>
+            <router-link exact to="/lists">名单</router-link>
           </md-list-item>
   
           <md-list-item>

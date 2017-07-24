@@ -10,9 +10,9 @@
   
           <md-card-content>
             <md-input-container>
-              <label for="user.namelists">名单</label>
+              <label for="user.name_lists">名单</label>
               <md-select id="namelists" v-model="selectedId">
-                <md-option v-for="(item, index) in user.nameLists" :key="item.id" :value="item.id">{{item.title}}</md-option>
+                <md-option v-for="(item, index) in user.name_lists" :key="item.id" :value="item.id">{{item.title}}</md-option>
               </md-select>
             </md-input-container>
             <md-input-container>
@@ -147,7 +147,7 @@ export default {
     return {
       userInfo: {},
       mode: 0,
-      user: { nameLists: [], },
+      user: { name_lists: [], },
       selectedId: '',
       selected: 0,
       arrayFull: [],
@@ -159,7 +159,7 @@ export default {
   },
   computed: {
     isEmpty() {
-      return this.user.nameLists.length === 0;
+      return this.user.name_lists.length === 0;
     },
     arraySelectedString() {
       return this.arraySelected.join(', ');
@@ -180,7 +180,7 @@ export default {
     },
     listChange(e) {//todo
       var selected = e.detail.value;
-      var nameLists = this.user.nameLists;
+      var nameLists = this.user.name_lists;
       nameLists.forEach((e, i) => {
         e.checked = false;
       });
@@ -245,13 +245,13 @@ export default {
     const user = JSON.parse(localStorage.getItem('user'));
 
     let selected = 0;
-    user.nameLists.forEach((e, i) => {
+    user.name_lists.forEach((e, i) => {
       if (e.id === selectedId) {
         selected = i;
         e.checked = true;
       }
     });
-    const names = user.nameLists[selected].names;
+    const names = user.name_lists[selected].names;
 
     this.user = user;
     this.selectedId = selectedId;
