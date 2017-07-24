@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"strconv"
-	"github.com/google/go-github/github"
 	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (app *App) getNameList(c *gin.Context) {
@@ -18,14 +18,11 @@ func (app *App) getNameList(c *gin.Context) {
 }
 
 func (app *App) createNameList(c *gin.Context) {
-	id := c.MustGet("user").(*github.User).ID
-	var user User
-	app.DB.First(&user, id)
+	user := c.MustGet("user").(User)
 	var json NameList
 	if c.BindJSON(&json) == nil {
-		json.ID = -1
 		json.Creator = user
-		app.DB.Model(&json).Create(&json)
+		app.DB.Create(&json)
 		ok(c, json)
 	} else {
 		badRequest(c)
@@ -43,11 +40,9 @@ func (app *App) updateNameList(c *gin.Context) {
 }
 
 func (app *App) getUser(c *gin.Context) {
-	id := c.MustGet("user").(*github.User).ID
-	var user User
+	user := c.MustGet("user").(User)
 	var nameLists []NameList
-	if err := app.DB.First(&user, id).Error; err == nil {
-		app.DB.Model(&user).Related(&nameLists, "NameLists")
+	if err := app.DB.Model(&user).Related(&nameLists, "NameLists").Error; err == nil {
 		user.NameLists = nameLists
 		ok(c, user)
 	} else {
@@ -57,14 +52,11 @@ func (app *App) getUser(c *gin.Context) {
 
 // params: id int, fork bool
 func (app *App) importNameList(c *gin.Context) {
-	id := c.MustGet("user").(*github.User).ID
+	user := c.MustGet("user").(User)
 	nid, err1 := strconv.Atoi(c.Param("id"))
 	fork, err2 := strconv.ParseBool(c.Param("fork"))
-	var user User
 	var nameList NameList
-	app.DB.First(&user, id)
-	app.DB.First(&nameList, nid)
-	if app.DB.Error == nil && err1 != nil && err2 != nil {
+	if app.DB.First(&nameList, nid).Error == nil && err1 != nil && err2 != nil {
 		tx := app.DB.Begin()
 		if !fork {
 			nameList.ID = -1
@@ -84,10 +76,8 @@ func (app *App) importNameList(c *gin.Context) {
 }
 
 func (app *App) removeNameList(c *gin.Context) {
-	id := c.MustGet("user").(*github.User).ID
+	user := c.MustGet("user").(User)
 	nid, err := strconv.Atoi(c.Param("id"))
-	var user User
-	app.DB.First(&user, id)
 	if app.DB.Error == nil && err != nil {
 		n := user.NameLists[:0]
 		for _, x := range user.NameLists {

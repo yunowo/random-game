@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
-	githuboauth "github.com/zalando/gin-oauth2/github"
+	oauth2 "github.com/zalando/gin-oauth2/github"
 )
 
 func (app *App) configRoutes() {
@@ -22,16 +22,19 @@ func (app *App) configRoutes() {
 	secret := []byte("a secret")
 	scopes := []string{"user:email", }
 	sessionName := "rnd_session"
-	githuboauth.Setup(RedirectURL, ConfigFile, scopes, secret)
-	r.Use(githuboauth.Session(sessionName))
+	oauth2.Setup(RedirectURL, ConfigFile, scopes, secret)
+	r.Use(oauth2.Session(sessionName))
+	r.Use(setOptions())
 
 	r.GET("/random/login", loginHandler)
 
-	random := r.Group("/random")
-	random.Use(githuboauth.Auth())
-	{
-		random.GET("/auth", app.auth)
+	auth := r.Group("/random")
+	auth.Use(oauth2.Auth())
+	auth.GET("/auth", app.auth)
 
+	random := r.Group("/random")
+	random.Use(app.check())
+	{
 		random.GET("/namelist/:id", app.getNameList)
 		random.POST("/namelist", app.createNameList)
 		random.PATCH("/namelist/:id", app.updateNameList)

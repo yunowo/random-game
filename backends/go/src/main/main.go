@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"context"
 	"log"
-	"time"
 	"net/http"
 	"os"
 	"os/signal"
-	"context"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 type App struct {
