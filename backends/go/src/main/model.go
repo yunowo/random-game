@@ -39,6 +39,10 @@ type Response struct {
 	Meta  interface{} `json:"meta"`
 }
 
+type Request struct {
+	Data NameList `json:"data"`
+}
+
 func (app *App) initDB() {
 	var err error
 	app.DB, err = gorm.Open("postgres", "host=localhost user=postgres dbname=postgres sslmode=disable password=postgres")

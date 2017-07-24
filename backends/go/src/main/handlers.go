@@ -19,21 +19,26 @@ func (app *App) getNameList(c *gin.Context) {
 
 func (app *App) createNameList(c *gin.Context) {
 	user := c.MustGet("user").(User)
-	var json NameList
+	var json Request
 	if c.BindJSON(&json) == nil {
-		json.Creator = user
-		app.DB.Create(&json)
-		ok(c, json)
+		nameList := json.Data
+		if nameList.Title == "" || nameList.Names == nil {
+			badRequest(c)
+		}
+		nameList.Creator = user
+		app.DB.Set("gorm:insert_option", "ON CONFLICT (id) DO NOTHING").Create(&nameList)
+		ok(c, nameList)
 	} else {
 		badRequest(c)
 	}
 }
 
 func (app *App) updateNameList(c *gin.Context) {
-	var json NameList
+	var json Request
 	if c.BindJSON(&json) == nil {
-		app.DB.Model(&json).Select("Title", "Names", "Visibility").Update(&json)
-		ok(c, json)
+		nameList := json.Data
+		app.DB.Model(&nameList).Select("Title", "Names", "Visibility").Update(&nameList)
+		ok(c, nameList)
 	} else {
 		badRequest(c)
 	}
