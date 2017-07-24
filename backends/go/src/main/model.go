@@ -19,6 +19,7 @@ type Model struct {
 type User struct {
 	Model
 	GitHubId  int        `json:"-" gorm:"column:github_id"`
+	Avatar    string     `json:"avatar"`
 	Name      string     `json:"name"`
 	NameLists []NameList `json:"name_lists" gorm:"many2many:user_name_lists"`
 }
