@@ -10,9 +10,9 @@
   
           <md-card-content>
             <md-input-container>
-              <label for="namelists">名单</label>
+              <label for="user.namelists">名单</label>
               <md-select id="namelists" v-model="selectedId">
-                <md-option v-for="(item, index) in nameLists" :key="item.id" :value="item.id">{{item.title}}</md-option>
+                <md-option v-for="(item, index) in user.nameLists" :key="item.id" :value="item.id">{{item.title}}</md-option>
               </md-select>
             </md-input-container>
             <md-input-container>
@@ -147,7 +147,7 @@ export default {
     return {
       userInfo: {},
       mode: 0,
-      nameLists: [],
+      user: { nameLists: [], },
       selectedId: '',
       selected: 0,
       arrayFull: [],
@@ -159,7 +159,7 @@ export default {
   },
   computed: {
     isEmpty() {
-      return this.nameLists.length === 0;
+      return this.user.nameLists.length === 0;
     },
     arraySelectedString() {
       return this.arraySelected.join(', ');
@@ -178,9 +178,9 @@ export default {
     onClose(type) {
       console.log('Closed', type);
     },
-    listChange(e) {
+    listChange(e) {//todo
       var selected = e.detail.value;
-      var nameLists = this.nameLists;
+      var nameLists = this.user.nameLists;
       nameLists.forEach((e, i) => {
         e.checked = false;
       });
@@ -242,18 +242,18 @@ export default {
   },
   mounted() {
     const selectedId = localStorage.getItem('selectedId');
-    const nameLists = JSON.parse(localStorage.getItem('nameLists'));
+    const user = JSON.parse(localStorage.getItem('user'));
 
     let selected = 0;
-    nameLists.forEach((e, i) => {
+    user.nameLists.forEach((e, i) => {
       if (e.id === selectedId) {
         selected = i;
         e.checked = true;
       }
     });
-    const names = nameLists[selected].names;
+    const names = user.nameLists[selected].names;
 
-    this.nameLists = nameLists;
+    this.user = user;
     this.selectedId = selectedId;
     this.selected = selected;
     this.arrayFull = names;

@@ -5,8 +5,8 @@
         <md-icon>info</md-icon>
         <div>离线状态下不可修改</div>
       </md-subheader>
-      <md-list v-model="nameLists">
-        <md-list-item v-for="(item, index) in nameLists" :key="item.id" @click="itemTap">
+      <md-list v-model="user.name_lists">
+        <md-list-item v-for="(item, index) in user.name_lists" :key="item.id" @click="itemTap">
           <md-avatar class="md-avatar-icon md-primary">
             <md-icon>ac_unit</md-icon>
           </md-avatar>
@@ -22,7 +22,7 @@
             <md-icon>share</md-icon>
             <md-tooltip md-direction="top">分享</md-tooltip>
           </md-button>
-          <md-button class="md-icon-button" @click="openDialog('dialog-delete', item)">
+          <md-button class="md-icon-button" @click="openDialog('dialog-remove', item)">
             <md-icon>delete</md-icon>
             <md-tooltip md-direction="top">删除</md-tooltip>
           </md-button>
@@ -130,11 +130,11 @@
         </md-dialog-content>
         <md-dialog-actions>
           <md-button class="md-primary" @click="closeDialog('dialog-create', false)">取消</md-button>
-          <md-button class="md-primary" @click="closeDialog('dialog-create', true)">创建</md-button>
+          <md-button class="md-primary" @click="closeDialog('dialog-create', true)">确定</md-button>
         </md-dialog-actions>
       </md-dialog>
   
-      <md-dialog-confirm md-title="确认删除?" md-content-html="真的要删除这个名单吗?" md-ok-text="确定" md-cancel-text="取消" @open="remove" ref="dialog-delete">
+      <md-dialog-confirm md-title="确认删除?" md-content-html="真的要删除这个名单吗?" md-ok-text="确定" md-cancel-text="取消" @close="remove" ref="dialog-remove">
       </md-dialog-confirm>
   
       <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
@@ -214,12 +214,12 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      nameLists: [],
+      user: { name_lists: [], },
       b64: '',
       fork: false,
       nameList: {},
       newNameList: {
-        id: null,
+        id: 0,
         title: '',
         visibility: 1,
         names: []
@@ -250,6 +250,9 @@ export default {
         this.mode = 'import';
         this.nameList = this.newNameList;
         this.b64 = "";
+      } else if (ref === 'dialog-remove') {
+        this.mode = 'remove';
+        this.nameList = nameList;
       }
     },
     closeDialog(ref, ok) {
@@ -257,11 +260,11 @@ export default {
       if (!ok) return;
       switch (this.mode) {
         case 'create': {
-          this.add();
+          this.create();
           break;
         }
         case 'edit': {
-          this.add();
+          this.edit();
           break;
         }
         case 'share': {
@@ -279,14 +282,22 @@ export default {
         url: '../listedit/listedit?isNew=false&id=' + e.currentTarget.id,
       });
     },
-    add() {
-      axios.post('/namelists', {
-        data: {
-          data: this.nameList
-        }
+    create() {
+      axios.post('/namelist', {
+        data: this.nameList,
       }).then(response => {
         console.log(response);
-        this.refresh();
+        this.sync();
+      }).catch(error => {
+        console.log(error);
+      });
+    },
+    edit() {
+      axios.patch('/namelist/' + this.nameList.id, {
+        data: this.nameList,
+      }).then(response => {
+        console.log(response);
+        this.sync();
       }).catch(error => {
         console.log(error);
       });
@@ -299,7 +310,7 @@ export default {
       }
 
       let dup = false;
-      this.nameLists.forEach((e, i) => {
+      this.user.name_lists.forEach((e, i) => {
         if (e.id == this.nameList.id) {
           this.message = '已有该名单';
           this.$refs.snackbar.open();
@@ -309,38 +320,40 @@ export default {
       if (dup) return;
 
       if (tab === 0) {
-        axios.post('/user/import', {
-          params: {
-            id: this.nameList.id,
-            fork: this.fork,
-          }
-        }).then(response => {
-          console.log(response);
-          this.refresh();
-        }).catch(error => {
-          console.log(error);
-        });
+        let params = new URLSearchParams();
+        params.append('id', this.nameList.id);
+        params.append('fork', this.fork);
+        axios.post('/user/import', params)
+          .then(response => {
+            console.log(response);
+            this.sync();
+          }).catch(error => {
+            console.log(error);
+          });
       } else {
         this.nameList.id = null;
         this.add();
       }
     },
-    remove() {
-      axios.post('/user/remove', {
-        params: {
-          id: this.nameList.id,
-        }
-      }).then(response => {
-        console.log(response);
-        this.refresh();
-      }).catch(error => {
-        console.log(error);
-      });
+    remove(type) {
+      console.log(type);
+
+      let params = new URLSearchParams();
+      params.append('id', this.nameList.id);
+      axios.post('/user/remove', params)
+        .then(response => {
+          console.log(response);
+          this.sync();
+        }).catch(error => {
+          console.log(error);
+        });
     },
-    refresh() {
+    sync() {
       axios.get('/user').then(response => {
         console.log(response);
-        localStorage.setItem('nameLists', response.data);
+        let user = response.data.data
+        this.user = user;
+        localStorage.setItem('user', JSON.stringify(user));
       }).catch(error => {
         console.log(error);
       });
@@ -369,8 +382,8 @@ export default {
     },
   },
   mounted() {
-    const nameLists = JSON.parse(localStorage.getItem('nameLists'));
-    this.nameLists = nameLists;
+    const user = JSON.parse(localStorage.getItem('user'));
+    this.user = user;
     this.nameList = this.newNameList;
   },
 };

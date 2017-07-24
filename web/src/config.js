@@ -25,18 +25,6 @@ Vue.material.registerTheme({
     primary: 'light-blue',
     accent: 'yellow',
   },
-  teal: {
-    primary: 'teal',
-    accent: 'orange',
-  },
-  'blue-grey': {
-    primary: 'blue-grey',
-    accent: 'blue',
-  },
-  cyan: {
-    primary: 'cyan',
-    accent: 'pink',
-  },
   red: {
     primary: 'red',
     accent: 'pink',

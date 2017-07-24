@@ -6,15 +6,17 @@
           <div class="md-title">我的</div>
         </md-card-header>
         <div class="userinfo">
-          <text></text>
-          <image class=".userinfo-avatar" src="/static/img/me.png"></image>
+          <md-avatar class="md-large">
+            <img :src="user.avatar" :alt="user.name">
+          </md-avatar>
+          <span>{{user.name}}</span>
         </div>
         <div>
-          <md-button @click="login">
+          <md-button class="md-raised md-primary" md-theme="green" @click="login">
             <md-icon md-src="static/img/icon-github.svg"></md-icon>
             <div>Login with GitHub</div>
           </md-button>
-          <md-button @click="sync">
+          <md-button class="md-raised md-primary" md-theme="light-blue" @click="sync">
             <md-icon>cloud_download</md-icon>
             <div>Sync with server</div>
           </md-button>
@@ -57,7 +59,7 @@
 }
 
 #card-my {
-  max-height: 159px;
+  max-height: 300px;
 }
 
 .md-with-hover {
@@ -72,16 +74,36 @@
 </style>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
       message: "",
+      user: {
+        id: 0,
+        name: "",
+        avatar: "",
+        namelists: [],
+      }
     };
   }, methods: {
     login() {
 
     },
-    sync() { },
-  }
+    sync() {
+      axios.get('/user').then(response => {
+        console.log(response);
+        let user = response.data.data
+        this.user = user;
+        localStorage.setItem('user', JSON.stringify(user));
+      }).catch(error => {
+        console.log(error);
+      });
+    },
+  },
+  mounted() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    this.user = user;
+  },
 };
 </script>
