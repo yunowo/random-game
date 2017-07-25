@@ -83,7 +83,7 @@
         <md-dialog-content class="dense">
           <h3 class="md-title">分享名单</h3>
           <md-tabs md-right class="md-transparent title-tabs" ref="share-tabs">
-            <md-tab id="tab-id" md-icon="insert_link" md-label="ID" md-active>
+            <md-tab id="tab-id" md-icon="insert_link" md-label="ID" :md-active="nameList.visibility === 1" v-if="nameList.visibility === 2">
               <form>
                 <md-input-container>
                   <label>ID</label>
@@ -91,7 +91,7 @@
                 </md-input-container>
               </form>
             </md-tab>
-            <md-tab id="tab-base64" md-icon="content_paste" md-label="Base64">
+            <md-tab id="tab-base64" md-icon="content_paste" md-label="Base64" :md-active="nameList.visibility === 2">
               <form>
                 <md-input-container>
                   <label>Base64</label>
@@ -99,7 +99,7 @@
                 </md-input-container>
               </form>
             </md-tab>
-            <md-tab id="tab-qr" md-icon="select_all" md-label="QR">
+            <md-tab id="tab-qr" md-icon="select_all" md-label="QR" v-if="nameList.visibility === 2">
               <vue-qr id="qrcode" bgSrc="/static/img/qr_background.jpg" text="Hello world!" height="200" width="200" v-if="mode === 'share'"></vue-qr>
             </md-tab>
           </md-tabs>
@@ -121,7 +121,7 @@
             <div class="fork-select">
               <md-icon>security</md-icon>
               <md-button-toggle md-single class="md-button-group">
-                <md-button @click="nameList.visibility = 0">公开</md-button>
+                <md-button @click="nameList.visibility = 2">公开</md-button>
                 <md-button class="md-toggle" @click="nameList.visibility = 1">私有</md-button>
               </md-button-toggle>
             </div>

@@ -16,12 +16,12 @@
               </md-select>
             </md-input-container>
             <md-input-container>
-              <md-select id="names" multiple v-model="arraySelected">
+              <md-select id="names" multiple v-model="arraySelected" ref="select">
                 <div style="display: flex">
                   <md-button @click="selectAll">全选</md-button>
                   <md-button @click="clearAll">清空</md-button>
                 </div>
-                <md-option v-for="(item, index) in arrayFull" :key="index" :value="item">{{item}}</md-option>
+                <md-option v-for="(item, index) in nameList.names" :key="index" :value="item">{{item}}</md-option>
               </md-select>
             </md-input-container>
   
@@ -145,12 +145,9 @@
 export default {
   data() {
     return {
-      userInfo: {},
       mode: 0,
       user: { name_lists: [], },
       selectedId: 0,
-      selected: 0,
-      arrayFull: [],
       arraySelected: [],
       randomized: [],
       finished: false,
@@ -160,11 +157,20 @@ export default {
     isEmpty() {
       return this.user.name_lists.length === 0;
     },
-    arraySelectedString() {
-      return this.arraySelected.join(', ');
-    },
     max() {
       return Math.max(...this.randomized);
+    },
+    nameList() {
+      let id = this.selectedId;
+      localStorage.setItem('selectedId', id);
+
+      let selected = this.user.name_lists.filter(e => e.id === id)[0];
+      if (!selected) return {};
+      this.arraySelected = selected.names;
+      let options = { 'ddd': 'ddd' };
+      if(this.$refs["select"])
+        this.$refs["select"].multipleOptions = options;
+      return selected;
     },
   },
   methods: {
@@ -174,37 +180,8 @@ export default {
     closeDialog(ref) {
       this.$refs[ref].close();
     },
-    onOpen() {
-      console.log('Opened');
-    },
-    onClose(type) {
-      console.log('Closed', type);
-    },
-    listChange(e) {//todo
-      var selected = e.detail.value;
-      var nameLists = this.user.name_lists;
-      nameLists.forEach((e, i) => {
-        e.checked = false;
-      });
-      nameLists[selected].checked = true;
-      var selectedId = nameLists[selected].id;
-      var names = nameLists[selected].names;
-
-      this.selectedId = selectedId;
-      this.selected = selected;
-      this.nameLists = nameLists;
-      this.arrayFull = names;
-      this.arraySelected = names;
-    },
-    namesChange(e) {
-      var flags = Array(this.arrayFull.length).fill(false);
-      e.detail.value.forEach((e, i) => {
-        flags[e] = true;
-      });
-      this.arrayFlags = flags;
-    },
     selectAll() {
-      this.arraySelected = this.arrayFull;
+      this.arraySelected = this.nameList.names;
     },
     clearAll() {
       this.arraySelected = [];
@@ -213,9 +190,9 @@ export default {
       this.mode = mode;
       this.restartTap();
     },
-    OKTap() {
-      this.restartTap();
-      localStorage.setItem('selectedId', this.selectedId);
+    restartTap() {
+      this.randomized = [];
+      this.finished = false;
     },
     randomTap() {
       var r = this.randomized;
@@ -234,29 +211,12 @@ export default {
         this.finished = true;
       }
     },
-    restartTap() {
-      this.randomized = [];
-      this.finished = false;
-    },
   },
   mounted() {
-    const selectedId = localStorage.getItem('selectedId');
     const user = JSON.parse(localStorage.getItem('user'));
-
-    let selected = 0;
-    user.name_lists.forEach((e, i) => {
-      if (e.id === selectedId) {
-        selected = i;
-        e.checked = true;
-      }
-    });
-    const names = user.name_lists[selected].names;
-
     this.user = user;
-    this.selectedId = selectedId;
-    this.selected = selected;
-    this.arrayFull = names;
-    this.arraySelected = names;
+
+    this.selectedId = parseInt(localStorage.getItem('selectedId'));
   },
 };
 </script>

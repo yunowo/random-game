@@ -8,10 +8,12 @@ import './config';
 
 import Hello from './components/Hello';
 import PageContent from './components/PageContent';
+import LoginDialog from './components/LoginDialog';
 
 Vue.component('hello', Hello);
 Vue.component('page-content', PageContent);
 Vue.component('vue-qr', VueQr);
+Vue.component('login-dialog', LoginDialog);
 
 /* eslint-disable no-new */
 new Vue({
@@ -66,8 +68,6 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   handleSectionTheme(to);
 });
-
-localStorage.setItem('selectedId', 1);
 
 const API_HOST = 'http://localhost:7000/random';
 // axios.defaults.baseURL = 'https://api.liuyun.me/random';

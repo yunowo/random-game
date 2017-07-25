@@ -12,9 +12,9 @@
           <span>{{user.name}}</span>
         </div>
         <div>
-          <md-button class="md-raised md-primary" md-theme="green" @click="login">
+          <md-button class="md-raised md-primary" md-theme="green" @click="logout">
             <md-icon md-src="static/img/icon-github.svg"></md-icon>
-            <div>Login with GitHub</div>
+            <div>Logout</div>
           </md-button>
           <md-button class="md-raised md-primary" md-theme="light-blue" @click="sync">
             <md-icon>cloud_download</md-icon>
@@ -88,9 +88,8 @@ export default {
       }
     };
   }, methods: {
-    login() {
-      let api = axios.defaults.baseURL;
-      window.location.replace(api + '/login');
+    logout() {
+      
     },
     sync() {
       axios.get('/user').then(response => {
