@@ -1,8 +1,10 @@
 import Vue from 'vue';
 import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.css';
+import VueClipboards from 'vue-clipboards';
 
 Vue.use(VueMaterial);
+Vue.use(VueClipboards);
 
 Vue.material.registerTheme({
   blue: {

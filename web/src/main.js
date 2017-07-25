@@ -17,7 +17,9 @@ Vue.component('vue-qr', VueQr);
 new Vue({
   router,
   template: '<App/>',
-  components: { App },
+  components: {
+    App,
+  },
 });
 
 let Docs = Vue.component('app', App);
@@ -66,8 +68,8 @@ router.afterEach((to) => {
 });
 
 localStorage.setItem('selectedId', 1);
-localStorage.setItem('nameLists', JSON.stringify([{ id: 1, visibility: 0, title: 'NotB515', names: ['WildHunter', 'PrinceRedMoon', 'SymPy', 'Robert Z', 'Yun', 'Personal_GH'], namesString: 'WildHunter, PrinceRedMoon, SymPy, Robert Z, Yun, Personal_GH' }]));
 
+const API_HOST = 'http://localhost:7000/random';
 // axios.defaults.baseURL = 'https://api.liuyun.me/random';
 axios.defaults.baseURL = 'http://localhost:7000/random';
 axios.defaults.withCredentials = true;

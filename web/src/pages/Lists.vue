@@ -82,7 +82,7 @@
       <md-dialog md-open-from="#fab" md-close-to="#fab" ref="dialog-share">
         <md-dialog-content class="dense">
           <h3 class="md-title">分享名单</h3>
-          <md-tabs md-right class="md-transparent title-tabs">
+          <md-tabs md-right class="md-transparent title-tabs" ref="share-tabs">
             <md-tab id="tab-id" md-icon="insert_link" md-label="ID" md-active>
               <form>
                 <md-input-container>
@@ -106,7 +106,7 @@
         </md-dialog-content>
         <md-dialog-actions>
           <md-button class="md-primary" @click="closeDialog('dialog-share', false)">关闭</md-button>
-          <md-button class="md-primary" @click="closeDialog('dialog-share', true)">复制到剪贴板</md-button>
+          <md-button class="md-primary" v-clipboard="clipboard" v-if="mode === 'share'">复制到剪贴板</md-button>
         </md-dialog-actions>
       </md-dialog>
   
@@ -229,30 +229,42 @@ export default {
     };
   },
   computed: {
-
+    clipboard() {
+      if (this.$refs['share-tabs'])
+        switch (this.$refs['share-tabs'].activeTabNumber) {
+          case 0: {
+            return this.nameList.id;
+          }
+          case 1: {
+            return this.b64;
+          }
+        }
+      return '';
+    },
   },
   methods: {
     openDialog(ref, nameList, edit) {
       this.$refs[ref].open();
-      if (ref === 'dialog-share') {
-        this.mode = 'share';
-        this.nameList = nameList;
-        this.b64 = this.tob64();
-      }
-      else if (ref === 'dialog-create' && edit) {
-        this.mode = 'edit';
-        this.nameList = nameList;
-      } else if (ref === 'dialog-create' && !edit) {
-        this.mode = 'create';
-        this.nameList = this.newNameList;
-        this.b64 = "";
-      } else if (ref === 'dialog-import') {
-        this.mode = 'import';
-        this.nameList = this.newNameList;
-        this.b64 = "";
-      } else if (ref === 'dialog-remove') {
-        this.mode = 'remove';
-        this.nameList = nameList;
+      this.mode = ref.split('dialog-')[1];
+      this.nameList = nameList;
+      this.b64 = "";
+      switch (this.mode) {
+        case 'create': {
+          if (edit) {
+            this.mode = 'edit';
+          } else {
+            this.nameList = this.newNameList;
+          }
+          break;
+        }
+        case 'share': {
+          this.b64 = this.tob64();
+          break;
+        }
+        case 'import': {
+          this.nameList = this.newNameList;
+          break;
+        }
       }
     },
     closeDialog(ref, ok) {
@@ -265,10 +277,6 @@ export default {
         }
         case 'edit': {
           this.edit();
-          break;
-        }
-        case 'share': {
-
           break;
         }
         case 'import': {

@@ -148,12 +148,11 @@ export default {
       userInfo: {},
       mode: 0,
       user: { name_lists: [], },
-      selectedId: '',
+      selectedId: 0,
       selected: 0,
       arrayFull: [],
       arraySelected: [],
       randomized: [],
-      max: 0,
       finished: false,
     };
   },
@@ -163,6 +162,9 @@ export default {
     },
     arraySelectedString() {
       return this.arraySelected.join(', ');
+    },
+    max() {
+      return Math.max(...this.randomized);
     },
   },
   methods: {
@@ -224,19 +226,16 @@ export default {
         r.push(Math.floor(Math.random() * 100));
 
         this.randomized = r;
-        this.max = Math.max(...r);
         this.finished = r.length === this.arraySelected.length;
       } else if (this.mode === 1) {
         r = Array(this.arraySelected.length).fill(-1);
         r[Math.floor(Math.random() * this.arraySelected.length)] = 1;
         this.randomized = r;
-        this.max = Math.max(...r);
         this.finished = true;
       }
     },
     restartTap() {
       this.randomized = [];
-      this.max = 0;
       this.finished = false;
     },
   },
