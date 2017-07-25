@@ -67,14 +67,19 @@ func (app *App) importNameList(c *gin.Context) {
 	fork, err2 := strconv.ParseBool(c.PostForm("fork"))
 	var nameList NameList
 	if app.DB.First(&nameList, nid).Error != nil || err1 != nil || err2 != nil {
-		badRequest(c)
+		notFound(c)
+		return
+	}
+
+	if nameList.Visibility == 1 {
+		forbidden(c)
 		return
 	}
 
 	tx := app.DB.Begin()
-	if !fork {
-		nameList.ID = -1
-		tx.Create(&nameList)
+	if fork {
+		nameList.ID = 0
+		tx.Set("gorm:insert_option", "ON CONFLICT (id) DO NOTHING").Create(&nameList)
 	}
 	tx.Exec("INSERT INTO user_name_lists (user_id, name_list_id) VALUES (?, ?)", user.ID, nameList.ID)
 	if tx.Error == nil {
@@ -116,4 +121,8 @@ func Unauthorized(c *gin.Context) {
 
 func forbidden(c *gin.Context) {
 	c.JSON(http.StatusForbidden, Response{nil, gin.H{"status": "Forbidden"}, nil})
+}
+
+func notFound(c *gin.Context) {
+	c.JSON(http.StatusNotFound, Response{nil, gin.H{"status": "NotFound"}, nil})
 }
