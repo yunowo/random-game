@@ -1,11 +1,12 @@
 <template>
   <page-content page-title="名单">
     <div id="main-content">
+      <md-progress md-indeterminate v-if="loading"></md-progress>
       <md-subheader class="info">
         <md-icon>info</md-icon>
         <div>离线状态下不可修改</div>
       </md-subheader>
-      <md-list v-model="user.name_lists">
+      <md-list class="md-triple-line" v-model="user.name_lists">
         <md-list-item v-for="(item, index) in user.name_lists" :key="item.id" @click="itemTap">
           <md-avatar class="md-avatar-icon md-primary">
             <md-icon>ac_unit</md-icon>
@@ -13,6 +14,7 @@
           <div class="md-list-text-container">
             <span>{{item.title}}</span>
             <span>{{item.names.join(', ')}}</span>
+            <p>创建者: {{item.creator.name}}</p>
           </div>
           <md-button class="md-icon-button" @click="openDialog('dialog-create', item, true)">
             <md-icon>mode_edit</md-icon>
@@ -139,7 +141,7 @@
   
       <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
         <span>{{message}}</span>
-        <md-button class="md-accent" md-theme="light-blue" @click="$refs.snackbar.close()">Retry</md-button>
+        <md-button class="md-accent" md-theme="light-blue" @click="$refs.snackbar.close()">确定</md-button>
       </md-snackbar>
     </div>
   </page-content>
@@ -226,6 +228,7 @@ export default {
       },
       message: "",
       mode: 'create',
+      loading: false,
     };
   },
   computed: {
@@ -253,7 +256,7 @@ export default {
           if (edit) {
             this.mode = 'edit';
           } else {
-            this.nameList = this.newNameList;
+            this.nameList = Object.assign({}, this.newNameList);
           }
           break;
         }
@@ -262,7 +265,7 @@ export default {
           break;
         }
         case 'import': {
-          this.nameList = this.newNameList;
+          this.nameList = Object.assign({}, this.newNameList);
           break;
         }
       }
@@ -270,6 +273,7 @@ export default {
     closeDialog(ref, ok) {
       this.$refs[ref].close();
       if (!ok) return;
+      this.loading = true;
       switch (this.mode) {
         case 'create': {
           this.create();
@@ -317,16 +321,15 @@ export default {
         this.nameList = json;
       }
 
-      let dup = false;
-      if (this.user.name_lists !== null)
-        this.user.name_lists.forEach((e, i) => {
-          if (e.id == this.nameList.id) {
-            this.message = '已有该名单';
-            this.$refs.snackbar.open();
-            dup = true;
-          }
-        });
-      if (dup) return;
+      if (this.user.name_lists !== null) {
+        let dup = this.user.name_lists.filter(e => e.id == this.nameList.id);
+        if (dup.length > 0) {
+          this.message = '已有该名单';
+          this.$refs.snackbar.open();
+          this.loading = false;
+          return;
+        }
+      }
 
       if (tab === 0) {
         let params = new URLSearchParams();
@@ -362,6 +365,7 @@ export default {
         let user = response.data.data
         this.user = user;
         localStorage.setItem('user', JSON.stringify(user));
+        this.loading = false;
       }).catch(error => {
         console.log(error);
       });
