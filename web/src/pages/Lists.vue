@@ -1,7 +1,6 @@
 <template>
   <page-content page-title="名单">
     <div id="main-content">
-      <md-progress md-indeterminate v-if="loading"></md-progress>
       <md-subheader class="info">
         <md-icon>info</md-icon>
         <div>离线状态下不可修改</div>
@@ -220,10 +219,11 @@
 
 <script>
 import axios from 'axios';
+
 export default {
   data() {
     return {
-      user: { name_lists: [], },
+      user: { name_lists: [] },
       b64: '',
       fork: false,
       nameList: {},
@@ -231,16 +231,16 @@ export default {
         id: 0,
         title: '',
         visibility: 1,
-        names: []
+        names: [],
       },
-      message: "",
+      message: '',
       mode: 'create',
       loading: false,
     };
   },
   computed: {
     clipboard() {
-      if (this.$refs['share-tabs'])
+      if (this.$refs['share-tabs']) {
         switch (this.$refs['share-tabs'].activeTabNumber) {
           case 0: {
             return this.nameList.id;
@@ -248,19 +248,21 @@ export default {
           case 1: {
             return this.b64;
           }
+          default: { /* empty */ }
         }
+      }
       return '';
     },
     qrurl() {
-      return 'http://app.liuyun.me/random/#/lists?id=' + this.nameList.id;
-    }
+      return `http://app.liuyun.me/random/#/lists?id=${this.nameList.id}`;
+    },
   },
   methods: {
     openDialog(ref, nameList, edit) {
       this.$refs[ref].open();
       this.mode = ref.split('dialog-')[1];
       this.nameList = nameList;
-      this.b64 = "";
+      this.b64 = '';
       switch (this.mode) {
         case 'create': {
           if (edit) {
@@ -271,13 +273,13 @@ export default {
           break;
         }
         case 'share': {
-          this.b64 = this.tob64();
+          this.b64 = btoa(JSON.stringify(this.nameList));
           break;
         }
         case 'import': {
           this.nameList = Object.assign({}, this.newNameList);
           break;
-        }
+        } default: { /* empty */ }
       }
     },
     closeDialog(ref, ok) {
@@ -296,38 +298,35 @@ export default {
         case 'import': {
           this.import();
           break;
-        }
+        } default: { /* empty */ }
       }
     },
     create() {
       axios.post('/namelist', {
         data: this.nameList,
-      }).then(response => {
-        console.log(response);
+      }).then((response) => {
         this.sync();
-      }).catch(error => {
+      }).catch((error) => {
         console.log(error);
       });
     },
     edit() {
-      axios.patch('/namelist/' + this.nameList.id, {
+      axios.patch(`/namelist/${this.nameList.id}`, {
         data: this.nameList,
-      }).then(response => {
-        console.log(response);
+      }).then((response) => {
         this.sync();
-      }).catch(error => {
+      }).catch((error) => {
         console.log(error);
       });
     },
     import() {
-      let tab = this.$refs['import-tabs'].activeTabNumber;
+      const tab = this.$refs['import-tabs'].activeTabNumber;
       if (tab === 1) {
-        let json = JSON.parse(this.b64tostr(this.b64));
-        this.nameList = json;
+        this.nameList = JSON.parse(atob(this.b64));
       }
 
       if (this.user.name_lists !== null) {
-        let dup = this.user.name_lists.filter(e => e.id == this.nameList.id);
+        const dup = this.user.name_lists.filter(e => e.id === this.nameList.id);
         if (dup.length > 0) {
           this.message = '已有该名单';
           this.$refs.snackbar.open();
@@ -337,14 +336,13 @@ export default {
       }
 
       if (tab === 0) {
-        let params = new URLSearchParams();
+        const params = new URLSearchParams();
         params.append('id', this.nameList.id);
         params.append('fork', this.fork);
         axios.post('/user/import', params)
-          .then(response => {
-            console.log(response);
+          .then((response) => {
             this.sync();
-          }).catch(error => {
+          }).catch((error) => {
             console.log(error);
           });
       } else {
@@ -354,24 +352,22 @@ export default {
     },
     remove(type) {
       if (type === 'cancel') return;
-      let params = new URLSearchParams();
+      const params = new URLSearchParams();
       params.append('id', this.nameList.id);
       axios.post('/user/remove', params)
-        .then(response => {
-          console.log(response);
+        .then((response) => {
           this.sync();
-        }).catch(error => {
+        }).catch((error) => {
           console.log(error);
         });
     },
     sync() {
-      axios.get('/user').then(response => {
-        console.log(response);
-        let user = response.data.data
+      axios.get('/user').then((response) => {
+        const user = response.data.data;
         this.user = user;
         localStorage.setItem('user', JSON.stringify(user));
         this.loading = false;
-      }).catch(error => {
+      }).catch((error) => {
         console.log(error);
       });
     },
@@ -386,14 +382,6 @@ export default {
           console.log(e);
         }
       }
-    },
-    b64tostr(b64) {
-      let str = atob(b64);
-      return str;
-    },
-    tob64() {
-      let b64 = btoa(JSON.stringify(this.nameList));
-      return b64;
     },
   },
   mounted() {

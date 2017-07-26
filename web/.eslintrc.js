@@ -35,10 +35,7 @@ module.exports = {
     }],
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-    'semi': [1, "always"],
-    'func-names': [1, "always"],
-    'indent': [1, 2],
-    'no-var': [1],
-    'no-unused-vars':[1],
+    'indent': [1, 2, { "SwitchCase": 1 }],
+    'no-unused-vars': [1],
   }
 }

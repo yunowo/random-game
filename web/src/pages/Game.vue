@@ -146,7 +146,7 @@ export default {
   data() {
     return {
       mode: 0,
-      user: { name_lists: [], },
+      user: { name_lists: [] },
       selectedId: 0,
       arraySelected: [],
       randomized: [],
@@ -161,15 +161,12 @@ export default {
       return Math.max(...this.randomized);
     },
     nameList() {
-      let id = this.selectedId;
+      const id = this.selectedId;
       localStorage.setItem('selectedId', id);
 
-      let selected = this.user.name_lists.filter(e => e.id === id)[0];
+      const selected = this.user.name_lists.filter(e => e.id === id)[0];
       if (!selected) return {};
       this.arraySelected = selected.names;
-      let options = { 'ddd': 'ddd' };
-      if(this.$refs["select"])
-        this.$refs["select"].multipleOptions = options;
       return selected;
     },
   },
@@ -195,7 +192,7 @@ export default {
       this.finished = false;
     },
     randomTap() {
-      var r = this.randomized;
+      let r = this.randomized;
       if (this.mode === 0) {
         if (r.length === this.arraySelected.length) {
           return;
@@ -216,7 +213,7 @@ export default {
     const user = JSON.parse(localStorage.getItem('user'));
     this.user = user;
 
-    this.selectedId = parseInt(localStorage.getItem('selectedId'));
+    this.selectedId = parseInt(localStorage.getItem('selectedId'), 10);
   },
 };
 </script>

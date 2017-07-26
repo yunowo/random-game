@@ -75,29 +75,30 @@
 
 <script>
 import axios from 'axios';
+
 export default {
   data() {
     return {
       loggedin: true,
-      message: "",
+      message: '',
       user: {
         id: 0,
-        name: "",
-        avatar: "",
+        name: '',
+        avatar: '',
         namelists: [],
-      }
+      },
     };
-  }, methods: {
+  },
+  methods: {
     logout() {
-      
+
     },
     sync() {
-      axios.get('/user').then(response => {
-        console.log(response);
-        let user = response.data.data
+      axios.get('/user').then((response) => {
+        const user = response.data.data;
         this.user = user;
         localStorage.setItem('user', JSON.stringify(user));
-      }).catch(error => {
+      }).catch((error) => {
         console.log(error);
       });
     },

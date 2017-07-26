@@ -55,15 +55,15 @@
 <script>
 export default {
   props: {
-    pageTitle: String
+    pageTitle: String,
   },
   methods: {
     toggleSidenav() {
       this.$root.toggleSidenav();
-    }
+    },
   },
   mounted() {
-    document.title = this.pageTitle + ' - 随机游戏';
-  }
+    document.title = `${this.pageTitle} - 随机游戏`;
+  },
 };
 </script>
