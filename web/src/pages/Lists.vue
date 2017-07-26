@@ -7,7 +7,7 @@
         <div>离线状态下不可修改</div>
       </md-subheader>
       <md-list class="md-triple-line" v-model="user.name_lists">
-        <md-list-item v-for="(item, index) in user.name_lists" :key="item.id" @click="itemTap">
+        <md-list-item v-for="(item, index) in user.name_lists" :key="item.id" @click="openDialog('dialog-share', item)">
           <md-avatar class="md-avatar-icon md-primary">
             <md-icon>ac_unit</md-icon>
           </md-avatar>
@@ -56,12 +56,15 @@
                   <md-input maxlength="20" required v-model="nameList.id"></md-input>
                 </md-input-container>
                 <div class="fork-select">
-                  <md-icon v-if="fork === false">cloud</md-icon>
-                  <md-icon v-else>cloud_queue</md-icon>
-                  <md-button-toggle md-single class="md-button-group">
+                  <md-icon>{{fork ? 'cloud' : 'cloud_queue'}}</md-icon>
+                  <md-button-toggle md-single class="md-button-group md-primary">
                     <md-button class="md-toggle" @click="fork = false">Clone</md-button>
                     <md-button @click="fork = true">Fork</md-button>
                   </md-button-toggle>
+                </div>
+                <div class="info">
+                  <md-icon>sentiment_neutral</md-icon>
+                  <div>{{fork ? '成为创建者，不与原名单同步' : '只有创建者可以编辑，与原名单同步'}}</div>
                 </div>
               </form>
             </md-tab>
@@ -102,13 +105,13 @@
               </form>
             </md-tab>
             <md-tab id="tab-qr" md-icon="select_all" md-label="QR" v-if="nameList.visibility === 2">
-              <vue-qr id="qrcode" bgSrc="/static/img/qr_background.jpg" text="Hello world!" height="200" width="200" v-if="mode === 'share'"></vue-qr>
+              <vue-qr id="qrcode" bgSrc="/static/img/qr_background.jpg" :text="qrurl" size="300" height="300" width="300" v-if="mode === 'share'"></vue-qr>
             </md-tab>
           </md-tabs>
         </md-dialog-content>
         <md-dialog-actions>
           <md-button class="md-primary" @click="closeDialog('dialog-share', false)">关闭</md-button>
-          <md-button class="md-primary" v-clipboard="clipboard" v-if="mode === 'share'">复制到剪贴板</md-button>
+          <md-button class="md-primary" v-clipboard="clipboard" v-if="mode === 'share' && $refs['share-tabs'].activeTabNumber !== 2">复制到剪贴板</md-button>
         </md-dialog-actions>
       </md-dialog>
   
@@ -122,7 +125,7 @@
             </md-input-container>
             <div class="fork-select">
               <md-icon>security</md-icon>
-              <md-button-toggle md-single class="md-button-group">
+              <md-button-toggle md-single class="md-button-group md-primary">
                 <md-button @click="nameList.visibility = 2">公开</md-button>
                 <md-button class="md-toggle" @click="nameList.visibility = 1">私有</md-button>
               </md-button-toggle>
@@ -205,6 +208,10 @@
   padding-bottom: 0px !important;
 }
 
+#tab-qr {
+  padding: 0px;
+}
+
 #qrcode {
   display: flex;
   justify-content: center;
@@ -244,6 +251,9 @@ export default {
         }
       return '';
     },
+    qrurl() {
+      return 'http://app.liuyun.me/random/#/lists?id=' + this.nameList.id;
+    }
   },
   methods: {
     openDialog(ref, nameList, edit) {
@@ -288,11 +298,6 @@ export default {
           break;
         }
       }
-    },
-    itemTap(e) {
-      wx.navigateTo({
-        url: '../listedit/listedit?isNew=false&id=' + e.currentTarget.id,
-      });
     },
     create() {
       axios.post('/namelist', {
@@ -384,12 +389,10 @@ export default {
     },
     b64tostr(b64) {
       let str = atob(b64);
-      console.log(str);
       return str;
     },
     tob64() {
       let b64 = btoa(JSON.stringify(this.nameList));
-      console.log(b64);
       return b64;
     },
   },

@@ -28,7 +28,7 @@
             <h4 class="md-subheading">选项</h4>
             <div class="mode-select">
               <md-icon>toys</md-icon>
-              <md-button-toggle md-single class="md-button-group">
+              <md-button-toggle md-single class="md-button-group md-primary">
                 <md-button class="md-toggle" @click="modeChange(0)">多次随机</md-button>
                 <md-button @click="modeChange(1)">一次随机</md-button>
               </md-button-toggle>
