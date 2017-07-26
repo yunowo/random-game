@@ -5,7 +5,7 @@
         <md-icon>info</md-icon>
         <div>离线状态下不可修改</div>
       </md-subheader>
-      <md-list class="md-triple-line" v-model="user.name_lists">
+      <md-list v-model="user.name_lists">
         <md-list-item v-for="(item, index) in user.name_lists" :key="item.id" @click="openDialog('dialog-share', item)">
           <md-avatar class="md-avatar-icon md-primary">
             <md-icon>ac_unit</md-icon>
@@ -13,7 +13,7 @@
           <div class="md-list-text-container">
             <span>{{item.title}}</span>
             <span>{{item.names.join(', ')}}</span>
-            <p>创建者: {{item.creator.name}}</p>
+            <p v-if="item.creator_id === user.id">创建者</p>
           </div>
           <md-button class="md-icon-button" @click="openDialog('dialog-create', item, true)">
             <md-icon>mode_edit</md-icon>
@@ -52,7 +52,7 @@
               <form>
                 <md-input-container md-clearable>
                   <label>ID</label>
-                  <md-input maxlength="20" required v-model="nameList.id"></md-input>
+                  <md-input maxlength="20" required type="number" v-model.number="nameList.id"></md-input>
                 </md-input-container>
                 <div class="fork-select">
                   <md-icon>{{fork ? 'cloud' : 'cloud_queue'}}</md-icon>
@@ -71,7 +71,7 @@
               <form>
                 <md-input-container md-clearable>
                   <label>Base64</label>
-                  <md-textarea maxlength="10000" required v-model="b64"></md-textarea>
+                  <md-textarea maxlength="10000" required v-model.lazy="b64"></md-textarea>
                 </md-input-container>
               </form>
             </md-tab>
@@ -91,7 +91,7 @@
               <form>
                 <md-input-container>
                   <label>ID</label>
-                  <md-input maxlength="20" required v-model="nameList.id"></md-input>
+                  <md-input maxlength="20" readonly v-model="nameList.id"></md-input>
                 </md-input-container>
               </form>
             </md-tab>
@@ -99,7 +99,7 @@
               <form>
                 <md-input-container>
                   <label>Base64</label>
-                  <md-textarea maxlength="10000" required v-model="b64"></md-textarea>
+                  <md-textarea maxlength="10000" readonly v-model="b64"></md-textarea>
                 </md-input-container>
               </form>
             </md-tab>
@@ -325,7 +325,7 @@ export default {
         this.nameList = JSON.parse(atob(this.b64));
       }
 
-      if (this.user.name_lists !== null) {
+      if (this.user.name_lists !== null && !this.fork) {
         const dup = this.user.name_lists.filter(e => e.id === this.nameList.id);
         if (dup.length > 0) {
           this.message = '已有该名单';
