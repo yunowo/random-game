@@ -79,12 +79,12 @@ func (app *App) importNameList(c *gin.Context) {
 	tx := app.DB.Begin()
 	if fork {
 		nameList.ID = 0
+		nameList.CreatorID = user.ID
 		tx.Set("gorm:insert_option", "ON CONFLICT (id) DO NOTHING").Create(&nameList)
 	}
-	tx.Exec("INSERT INTO user_name_lists (user_id, name_list_id) VALUES (?, ?)", user.ID, nameList.ID)
-	if tx.Error == nil {
+	if tx.Exec("INSERT INTO user_name_lists (user_id, name_list_id) VALUES (?, ?)", user.ID, nameList.ID).Error == nil {
 		tx.Commit()
-		ok(c, user)
+		ok(c, nameList)
 	} else {
 		tx.Rollback()
 		badRequest(c)
