@@ -29,7 +29,7 @@ func (app *App) createNameList(c *gin.Context) {
 	if nameList.Title == "" || nameList.Names == nil {
 		badRequest(c)
 	}
-	nameList.Creator = user
+	nameList.CreatorID = user.ID
 
 	tx := app.DB.Begin()
 	tx.Set("gorm:insert_option", "ON CONFLICT (id) DO NOTHING").Create(&nameList)

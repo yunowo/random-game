@@ -39,13 +39,13 @@ func loginHandler(c *gin.Context) {
 func (app *App) auth(c *gin.Context) {
 	info := c.MustGet("user").(*github.User)
 	user := User{}
-	app.DB.Where(User{GitHubId: *info.ID}).Attrs(User{Model: Model{CreatedAt: time.Now()}, Name: *info.Name, Avatar: *info.AvatarURL}).FirstOrCreate(&user)
+	app.DB.Where(User{GitHubID: *info.ID}).Attrs(User{Model: Model{CreatedAt: time.Now()}, Name: *info.Name, Avatar: *info.AvatarURL}).FirstOrCreate(&user)
 
 	session := sessions.Default(c)
 	session.Set("user_id", user.ID)
 	session.Save()
 
-	c.Redirect(http.StatusTemporaryRedirect, "/")
+	c.Redirect(http.StatusTemporaryRedirect, AppEndpoint+"/#/my")
 }
 
 func (app *App) check() gin.HandlerFunc {
@@ -58,10 +58,7 @@ func (app *App) check() gin.HandlerFunc {
 		}
 
 		var user User
-		if app.DB.First(&user, userID).Error == nil {
-			var nameLists []NameList
-			app.DB.Model(&user).Related(&nameLists, "NameLists")
-			user.NameLists = nameLists
+		if app.DB.Preload("NameLists").First(&user, userID).Error == nil {
 			c.Set("user", user)
 		} else {
 			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid user %s", userID))

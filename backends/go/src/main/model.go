@@ -18,7 +18,7 @@ type Model struct {
 
 type User struct {
 	Model
-	GitHubId  int        `json:"-" gorm:"column:github_id"`
+	GitHubID  int        `json:"-" gorm:"column:github_id"`
 	Avatar    string     `json:"avatar"`
 	Name      string     `json:"name"`
 	NameLists []NameList `json:"name_lists" gorm:"many2many:user_name_lists"`
@@ -30,7 +30,7 @@ type NameList struct {
 	Names      pq.StringArray `json:"names" gorm:"type:varchar(100)[]"`
 	Visibility int            `json:"visibility"`
 	Users      []User         `json:"-" gorm:"many2many:user_name_lists"`
-	Creator    User           `json:"creator"`
+	CreatorID  int            `json:"creator_id" gorm:"column:creator_id"`
 }
 
 type Response struct {
