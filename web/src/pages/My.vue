@@ -14,11 +14,11 @@
         <div>
           <md-button class="md-raised md-primary" md-theme="green" @click="logout">
             <md-icon md-src="static/img/icon-github.svg"></md-icon>
-            <div>Logout</div>
+            <div>退出</div>
           </md-button>
-          <md-button class="md-raised md-primary" md-theme="blue" @click="$store.commit('sync')">
+          <md-button class="md-raised md-primary" md-theme="blue" @click="$store.dispatch('sync')">
             <md-icon>cloud_download</md-icon>
-            <div>Sync with server</div>
+            <div>同步</div>
           </md-button>
         </div>
       </md-card>

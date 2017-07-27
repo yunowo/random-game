@@ -148,14 +148,21 @@ export default {
   data() {
     return {
       mode: 0,
-      user: { name_lists: [] },
-      selectedId: 0,
       arraySelected: [],
       randomized: [],
       finished: false,
     };
   },
   computed: {
+    user() {
+      return this.$store.state.user;
+    },
+    selectedId: {
+      get() { return this.$store.state.selectedId; },
+      set(newVal) {
+        this.$store.commit('selectedId', newVal);
+      },
+    },
     isEmpty() {
       return this.user.name_lists.length === 0;
     },
@@ -163,10 +170,7 @@ export default {
       return Math.max(...this.randomized);
     },
     nameList() {
-      const id = this.selectedId;
-      localStorage.setItem('selectedId', id);
-
-      const selected = this.user.name_lists.filter(e => e.id === id)[0];
+      const selected = this.user.name_lists.filter(e => e.id === this.selectedId)[0];
       if (!selected) return {};
       this.arraySelected = selected.names;
       return selected;
@@ -211,11 +215,6 @@ export default {
       }
     },
   },
-  mounted() {
-    const user = JSON.parse(localStorage.getItem('user'));
-    this.user = user;
-
-    this.selectedId = parseInt(localStorage.getItem('selectedId'), 10);
-  },
+  mounted() { },
 };
 </script>

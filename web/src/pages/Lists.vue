@@ -143,10 +143,6 @@
   
       <empty-placeholder v-if="isEmpty"></empty-placeholder>
   
-      <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
-        <span>{{message}}</span>
-        <md-button class="md-accent" md-theme="blue" @click="$refs.snackbar.close()">确定</md-button>
-      </md-snackbar>
     </div>
   </page-content>
 </template>
@@ -225,8 +221,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      b64: '',
-      fork: false,
+      mode: 'create',
       nameList: {},
       newNameList: {
         id: 0,
@@ -234,14 +229,16 @@ export default {
         visibility: 1,
         names: [],
       },
-      message: '',
-      mode: 'create',
-      loading: false,
+      b64: '',
+      fork: false,
     };
   },
   computed: {
     user() {
       return this.$store.state.user;
+    },
+    loading() {
+      return this.$store.state.loading;
     },
     isEmpty() {
       return this.user.name_lists.length === 0;
@@ -298,7 +295,7 @@ export default {
     closeDialog(ref, ok) {
       this.$refs[ref].close();
       if (!ok) return;
-      this.loading = true;
+      this.$store.commit('loading', true);
       switch (this.mode) {
         case 'create': {
           this.create();
@@ -318,7 +315,7 @@ export default {
       axios.post('/namelist', {
         data: this.nameList,
       }).then((response) => {
-        this.$store.commit('sync');
+        this.$store.dispatch('sync');
       }).catch((error) => {
         console.log(error);
       });
@@ -327,7 +324,7 @@ export default {
       axios.patch(`/namelist/${this.nameList.id}`, {
         data: this.nameList,
       }).then((response) => {
-        this.$store.commit('sync');
+        this.$store.dispatch('sync');
       }).catch((error) => {
         console.log(error);
       });
@@ -341,9 +338,8 @@ export default {
       if (this.user.name_lists !== null && !this.fork) {
         const dup = this.user.name_lists.filter(e => e.id === this.nameList.id);
         if (dup.length > 0) {
-          this.message = '已有该名单';
-          this.$refs.snackbar.open();
-          this.loading = false;
+          this.$store.commit('message', '已有该名单');
+          this.$store.commit('loading', false);
           return;
         }
       }
@@ -354,7 +350,7 @@ export default {
         params.append('fork', this.fork);
         axios.post('/user/import', params)
           .then((response) => {
-            this.$store.commit('sync');
+            this.$store.dispatch('sync');
           }).catch((error) => {
             console.log(error);
           });
@@ -369,7 +365,7 @@ export default {
       params.append('id', this.nameList.id);
       axios.post('/user/remove', params)
         .then((response) => {
-          this.$store.commit('sync');
+          this.$store.dispatch('sync');
         }).catch((error) => {
           console.log(error);
         });

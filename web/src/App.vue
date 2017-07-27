@@ -1,10 +1,11 @@
 <template>
   <div class="container">
+    <md-progress md-indeterminate class="progress md-accent" v-if="loading"></md-progress>
     <md-sidenav class="main-sidebar md-left md-fixed" md-swipeable ref="main-sidebar">
       <md-toolbar>
         <router-link exact to="/">
           <md-icon class="md-size-5x md-primary">casino</md-icon>
-          <span>随机游戏</span>
+          <span class="black">随机游戏</span>
         </router-link>
       </md-toolbar>
   
@@ -21,6 +22,10 @@
           <md-list-item>
             <router-link exact to="/my">我的</router-link>
           </md-list-item>
+  
+          <md-list-item>
+            <md-button @click="showLogin">LOGIN</md-button>
+          </md-list-item>
         </md-list>
       </div>
   
@@ -29,6 +34,13 @@
     <transition name="md-router" appear>
       <router-view></router-view>
     </transition>
+  
+    <login-dialog v-if="!auth" ref="logindlg"></login-dialog>
+  
+    <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
+      <span>{{message.text}}</span>
+      <md-button class="md-accent" md-theme="blue" @click="$refs.snackbar.close()">确定</md-button>
+    </md-snackbar>
   </div>
 </template>
 
@@ -183,11 +195,21 @@ code {
 .api-table tr>td:first-child {
   white-space: nowrap;
 }
+
+.progress {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(128, 128, 128, 0.7);
+}
+
+.black {
+  color: black;
+}
 </style>
 
 <script>
-import Vue from 'vue';
-
 export default {
   data() {
     return {
@@ -195,7 +217,25 @@ export default {
       pageTitle: '',
     };
   },
-  computed: {},
+  computed: {
+    loading() {
+      return this.$store.state.loading;
+    },
+    auth() {
+      return this.$store.state.auth;
+    },
+    message() {
+      return this.$store.state.message;
+    },
+  },
+  watch: {
+    auth(a) {
+      this.showLogin();
+    },
+    message() {
+      this.$refs.snackbar.open();
+    },
+  },
   methods: {
     toggleSidenav() {
       this.$refs['main-sidebar'].toggle();
@@ -203,7 +243,14 @@ export default {
     closeSidenav() {
       this.$refs['main-sidebar'].close();
     },
+    showLogin() {
+      if (!this.auth) {
+        this.$refs.logindlg.$refs['dialog-login'].open();
+      }
+    },
   },
-  mounted() { },
+  mounted() {
+    this.$store.dispatch('sync');
+  },
 };
 </script>
