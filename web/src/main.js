@@ -9,11 +9,13 @@ import './config';
 import Hello from './components/Hello';
 import PageContent from './components/PageContent';
 import LoginDialog from './components/LoginDialog';
+import EmptyPlaceholder from './components/EmptyPlaceholder';
 
 Vue.component('hello', Hello);
 Vue.component('page-content', PageContent);
 Vue.component('vue-qr', VueQr);
 Vue.component('login-dialog', LoginDialog);
+Vue.component('empty-placeholder', EmptyPlaceholder);
 
 /* eslint-disable no-new */
 new Vue({

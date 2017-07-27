@@ -68,16 +68,7 @@
         </md-table-card>
       </div>
   
-      <div class="page" v-else>
-        <div class="weui-msg">
-          <md-icon class="md-accent md-size-4x"></md-icon>
-          <div class="weui-msg__text-area">
-            <div class="weui-msg__title">无名单</div>
-            <div class="weui-msg__desc">请添加或导入名单</div>
-          </div>
-          <router-link to="lists">→_→</router-link>
-        </div>
-      </div>
+      <empty-placeholder v-if="isEmpty"></empty-placeholder>
     </div>
   </page-content>
 </template>

@@ -2,7 +2,7 @@
   <page-content page-title="名单">
     <div id="main-content">
       <md-subheader class="info">
-        <md-icon>info</md-icon>
+        <md-icon>sentiment_neutral</md-icon>
         <div>离线状态下不可修改</div>
       </md-subheader>
       <md-list v-model="user.name_lists">
@@ -15,8 +15,8 @@
             <span>{{item.names.join(', ')}}</span>
             <p v-if="item.creator_id === user.id">创建者</p>
           </div>
-          <md-button class="md-icon-button" @click="openDialog('dialog-create', item, true)">
-            <md-icon>mode_edit</md-icon>
+          <md-button class="md-icon-button" @click="openDialog('dialog-create', item, true)" v-if="item.creator_id === user.id">
+            <md-icon>brush</md-icon>
             <md-tooltip md-direction="top">编辑</md-tooltip>
           </md-button>
           <md-button class="md-icon-button" @click="openDialog('dialog-share', item)">
@@ -33,9 +33,9 @@
   
       <md-speed-dial md-open="hover" md-mode="scale" class="md-fab-bottom-right" md-theme="light-blue">
         <md-button id="fab" class="md-fab" md-fab-trigger @click="openDialog('dialog-create')">
-          <md-icon md-icon-morph>mode_edit</md-icon>
+          <md-icon md-icon-morph>brush</md-icon>
           <md-icon>add</md-icon>
-          <md-tooltip md-direction="left">添加</md-tooltip>
+          <md-tooltip md-direction="left">创建</md-tooltip>
         </md-button>
   
         <md-button class="md-fab md-primary md-mini md-clean" @click="openDialog('dialog-import')">
@@ -104,7 +104,7 @@
               </form>
             </md-tab>
             <md-tab id="tab-qr" md-icon="select_all" md-label="QR" v-if="nameList.visibility === 2">
-              <vue-qr id="qrcode" bgSrc="/static/img/qr_background.jpg" :text="qrurl" size="300" height="300" width="300" v-if="mode === 'share'"></vue-qr>
+              <vue-qr id="qrcode" bgSrc="/static/img/qr_background.jpg" :text="qrURL" size="300" height="300" width="300" v-if="mode === 'share'"></vue-qr>
             </md-tab>
           </md-tabs>
         </md-dialog-content>
@@ -140,6 +140,8 @@
   
       <md-dialog-confirm md-title="确认删除?" md-content-html="真的要删除这个名单吗?" md-ok-text="确定" md-cancel-text="取消" @close="remove" ref="dialog-remove">
       </md-dialog-confirm>
+  
+      <empty-placeholder></empty-placeholder>
   
       <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
         <span>{{message}}</span>
@@ -239,6 +241,9 @@ export default {
     };
   },
   computed: {
+    isEmpty() {
+      return this.user.name_lists.length === 0;
+    },
     clipboard() {
       if (this.$refs['share-tabs']) {
         switch (this.$refs['share-tabs'].activeTabNumber) {
@@ -253,9 +258,15 @@ export default {
       }
       return '';
     },
-    qrurl() {
+    qrURL() {
       return `http://app.liuyun.me/random/#/lists?id=${this.nameList.id}`;
     },
+  },
+  created() {
+    this.paramImport();
+  },
+  watch: {
+    $route: 'paramImport',
   },
   methods: {
     openDialog(ref, nameList, edit) {
@@ -381,6 +392,14 @@ export default {
         } catch (e) {
           console.log(e);
         }
+      }
+    },
+    paramImport() {
+      if (this.$route.query.id) {
+        setTimeout(() => {
+          this.nameList.id = parseInt(this.$route.query.id, 10);
+          this.openDialog('dialog-import');
+        }, 100);
       }
     },
   },
