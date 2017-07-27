@@ -31,7 +31,7 @@
         </md-list-item>
       </md-list>
   
-      <md-speed-dial md-open="hover" md-mode="scale" class="md-fab-bottom-right" md-theme="light-blue">
+      <md-speed-dial md-open="hover" md-mode="scale" class="md-fab-bottom-right">
         <md-button id="fab" class="md-fab" md-fab-trigger @click="openDialog('dialog-create')">
           <md-icon md-icon-morph>brush</md-icon>
           <md-icon>add</md-icon>
@@ -141,11 +141,11 @@
       <md-dialog-confirm md-title="确认删除?" md-content-html="真的要删除这个名单吗?" md-ok-text="确定" md-cancel-text="取消" @close="remove" ref="dialog-remove">
       </md-dialog-confirm>
   
-      <empty-placeholder></empty-placeholder>
+      <empty-placeholder v-if="isEmpty"></empty-placeholder>
   
       <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
         <span>{{message}}</span>
-        <md-button class="md-accent" md-theme="light-blue" @click="$refs.snackbar.close()">确定</md-button>
+        <md-button class="md-accent" md-theme="blue" @click="$refs.snackbar.close()">确定</md-button>
       </md-snackbar>
     </div>
   </page-content>
@@ -225,7 +225,6 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      user: { name_lists: [] },
       b64: '',
       fork: false,
       nameList: {},
@@ -241,6 +240,9 @@ export default {
     };
   },
   computed: {
+    user() {
+      return this.$store.state.user;
+    },
     isEmpty() {
       return this.user.name_lists.length === 0;
     },
@@ -316,7 +318,7 @@ export default {
       axios.post('/namelist', {
         data: this.nameList,
       }).then((response) => {
-        this.sync();
+        this.$store.commit('sync');
       }).catch((error) => {
         console.log(error);
       });
@@ -325,7 +327,7 @@ export default {
       axios.patch(`/namelist/${this.nameList.id}`, {
         data: this.nameList,
       }).then((response) => {
-        this.sync();
+        this.$store.commit('sync');
       }).catch((error) => {
         console.log(error);
       });
@@ -352,7 +354,7 @@ export default {
         params.append('fork', this.fork);
         axios.post('/user/import', params)
           .then((response) => {
-            this.sync();
+            this.$store.commit('sync');
           }).catch((error) => {
             console.log(error);
           });
@@ -367,32 +369,10 @@ export default {
       params.append('id', this.nameList.id);
       axios.post('/user/remove', params)
         .then((response) => {
-          this.sync();
+          this.$store.commit('sync');
         }).catch((error) => {
           console.log(error);
         });
-    },
-    sync() {
-      axios.get('/user').then((response) => {
-        const user = response.data.data;
-        this.user = user;
-        localStorage.setItem('user', JSON.stringify(user));
-        this.loading = false;
-      }).catch((error) => {
-        console.log(error);
-      });
-    },
-    onLoad(options) {
-      console.log(options);
-      if (typeof options.b64 !== 'undefined') {
-        try {
-          this.b64 = options.b64;
-          this.onShow();
-          this.okTap();
-        } catch (e) {
-          console.log(e);
-        }
-      }
     },
     paramImport() {
       if (this.$route.query.id) {
@@ -404,8 +384,6 @@ export default {
     },
   },
   mounted() {
-    const user = JSON.parse(localStorage.getItem('user'));
-    this.user = user;
     this.nameList = this.newNameList;
   },
 };

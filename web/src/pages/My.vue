@@ -9,14 +9,14 @@
           <md-avatar class="md-large">
             <img :src="user.avatar" :alt="user.name">
           </md-avatar>
-          <span>{{user.name}}</span>
+          <span class="md-subheading">{{user.name}}</span>
         </div>
         <div>
           <md-button class="md-raised md-primary" md-theme="green" @click="logout">
             <md-icon md-src="static/img/icon-github.svg"></md-icon>
             <div>Logout</div>
           </md-button>
-          <md-button class="md-raised md-primary" md-theme="light-blue" @click="sync">
+          <md-button class="md-raised md-primary" md-theme="blue" @click="$store.commit('sync')">
             <md-icon>cloud_download</md-icon>
             <div>Sync with server</div>
           </md-button>
@@ -25,7 +25,7 @@
       <md-card md-with-hover id="card-about">
         <md-card-header>
           <div class="md-title">Random Game</div>
-          <div class="md-subhead">Early Access 0.2.0</div>
+          <div class="md-subheading">Early Access 0.2.0</div>
         </md-card-header>
         <md-card-expand>
           <md-card-actions>
@@ -38,7 +38,7 @@
           </md-card-actions>
   
           <md-card-content>
-            <hello></hello>
+            <about></about>
           </md-card-content>
         </md-card-expand>
   
@@ -46,7 +46,7 @@
   
       <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
         <span>{{message}}</span>
-        <md-button class="md-accent" md-theme="light-blue" @click="$refs.snackbar.close()">Retry</md-button>
+        <md-button class="md-accent" md-theme="blue" @click="$refs.snackbar.close()">Retry</md-button>
       </md-snackbar>
     </div>
   </page-content>
@@ -71,41 +71,31 @@
   justify-content: center;
   flex-flow: row wrap;
 }
+
+.userinfo {
+  margin: 10px;
+}
 </style>
 
 <script>
-import axios from 'axios';
-
 export default {
   data() {
     return {
       loggedin: true,
       message: '',
-      user: {
-        id: 0,
-        name: '',
-        avatar: '',
-        namelists: [],
-      },
     };
+  },
+  computed: {
+    user() {
+      return this.$store.state.user;
+    },
   },
   methods: {
     logout() {
 
     },
-    sync() {
-      axios.get('/user').then((response) => {
-        const user = response.data.data;
-        this.user = user;
-        localStorage.setItem('user', JSON.stringify(user));
-      }).catch((error) => {
-        console.log(error);
-      });
-    },
+
   },
-  mounted() {
-    const user = JSON.parse(localStorage.getItem('user'));
-    this.user = user;
-  },
+  mounted() { },
 };
 </script>

@@ -80,7 +80,7 @@
 }
 
 #card-select {
-  max-height: 368px;
+  max-height: 344px;
 }
 
 .md-with-hover {
@@ -90,6 +90,14 @@
 .main-game {
   display: flex;
   flex-flow: row wrap;
+}
+
+.md-input-container {
+  margin-bottom: 4px;
+}
+
+.md-subheading {
+  margin-top: 20px !important;
 }
 
 .mode-select {
@@ -112,6 +120,9 @@
   .md-button {
     border-radius: 2px !important;
     margin-left: 8px;
+  }
+  .md-button.md-toggle {
+    color: white !important;
   }
 }
 

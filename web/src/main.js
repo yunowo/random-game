@@ -1,32 +1,47 @@
 import Vue from 'vue';
-import axios from 'axios';
+import VueMaterial from 'vue-material';
+import 'vue-material/dist/vue-material.css';
+import VueClipboards from 'vue-clipboards';
 import VueQr from 'vue-qr';
+import axios from 'axios';
 
 import App from './App';
 import router from './router';
-import './config';
+import store from './store';
 
-import Hello from './components/Hello';
+import About from './components/About';
 import PageContent from './components/PageContent';
 import LoginDialog from './components/LoginDialog';
 import EmptyPlaceholder from './components/EmptyPlaceholder';
 
-Vue.component('hello', Hello);
+Vue.use(VueMaterial);
+Vue.use(VueClipboards);
+
+Vue.component('about', About);
 Vue.component('page-content', PageContent);
 Vue.component('vue-qr', VueQr);
 Vue.component('login-dialog', LoginDialog);
 Vue.component('empty-placeholder', EmptyPlaceholder);
 
-/* eslint-disable no-new */
-new Vue({
-  router,
-  template: '<App/>',
-  components: {
-    App,
+Vue.material.registerTheme({
+  blue: {
+    primary: 'light-blue',
+    accent: 'pink',
+  },
+  green: {
+    primary: 'green',
+    accent: 'pink',
+  },
+  teal: {
+    primary: 'teal',
+    accent: 'pink',
+  },
+  red: {
+    primary: 'red',
+    accent: 'pink',
   },
 });
 
-let Docs = Vue.component('app', App);
 const handleSectionTheme = (currentRoute) => {
   let theme = 'blue';
   const name = currentRoute.name;
@@ -35,7 +50,7 @@ const handleSectionTheme = (currentRoute) => {
     if (name === 'game') {
       theme = 'blue';
     } else if (name === 'lists') {
-      theme = 'orange';
+      theme = 'teal';
     } else if (name === 'my') {
       theme = 'green';
     } else if (name === 'error') {
@@ -46,9 +61,11 @@ const handleSectionTheme = (currentRoute) => {
   Vue.material.setCurrentTheme(theme);
 };
 
-Docs = new Docs({
+let AppComponent = Vue.component('app', App);
+AppComponent = new AppComponent({
   el: '#app',
   router,
+  store,
 });
 
 handleSectionTheme(router.currentRoute);
@@ -61,7 +78,7 @@ router.beforeEach((to, from, next) => {
       mainContent.scrollTop = 0;
     }
 
-    Docs.closeSidenav();
+    AppComponent.closeSidenav();
 
     next();
   });
@@ -71,7 +88,6 @@ router.afterEach((to) => {
   handleSectionTheme(to);
 });
 
-const API_HOST = 'http://localhost:7000/random';
 // axios.defaults.baseURL = 'https://api.liuyun.me/random';
 axios.defaults.baseURL = 'http://localhost:7000/random';
 axios.defaults.withCredentials = true;
