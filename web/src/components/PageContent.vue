@@ -7,7 +7,7 @@
   
       <div class="md-title">{{ pageTitle }}</div>
   
-      <md-button href="https://github.com/marcosmoura/vue-material" target="_blank" rel="noopener" class="md-icon-button github">
+      <md-button href="https://github.com/yunv/random-game" target="_blank" rel="noopener" class="md-icon-button github">
         <md-icon md-src="static/img/icon-github.svg"></md-icon>
       </md-button>
     </md-whiteframe>

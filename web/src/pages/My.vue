@@ -10,16 +10,21 @@
             <img :src="user.avatar" :alt="user.name">
           </md-avatar>
           <span class="md-subheading">{{user.name}}</span>
-        </div>
-        <div>
-          <md-button class="md-raised md-primary" md-theme="blue" @click="$store.dispatch('sync')">
-            <md-icon>cloud_download</md-icon>
-            <div>同步</div>
-          </md-button>
-          <md-button class="md-raised md-primary" md-theme="green" @click="logout">
-            <md-icon md-src="static/img/icon-github.svg"></md-icon>
-            <div>退出</div>
-          </md-button>
+  
+          <div class="button-area">
+            <md-button class="md-raised md-primary" md-theme="blue" @click="$store.dispatch('sync')">
+              <div class="icon-button">
+                <md-icon>cloud_download</md-icon>
+                <div>同步</div>
+              </div>
+            </md-button>
+            <md-button class="md-raised md-primary" md-theme="green" @click="logout">
+              <div class="icon-button">
+                <md-icon md-src="static/img/icon-github.svg"></md-icon>
+                <div>退出</div>
+              </div>
+            </md-button>
+          </div>
         </div>
       </md-card>
       <md-card md-with-hover id="card-about">
@@ -29,9 +34,7 @@
         </md-card-header>
         <md-card-expand>
           <md-card-actions>
-            <md-button>Action</md-button>
-            <md-button>Action</md-button>
-            <span style="flex: 1"></span>
+            <h2>Sources</h2>
             <md-button class="md-icon-button" md-expand-trigger>
               <md-icon>keyboard_arrow_down</md-icon>
             </md-button>
@@ -54,7 +57,7 @@
 }
 
 #card-my {
-  max-height: 300px;
+  max-height: 176px;
 }
 
 .md-with-hover {
@@ -68,7 +71,34 @@
 }
 
 .userinfo {
-  margin: 10px;
+  display: flex;
+  align-content: left;
+  align-items: center;
+  .md-avatar {
+    margin: 20px;
+  }
+  .md-subheading {
+    text-align: center;
+    margin-right: 30px;
+  }
+  .button-area {
+    display: flex;
+    align-items: center;
+    height: 64px;
+  }
+
+  .icon-button {
+    display: flex;
+    flex: 1;
+    .md-icon {
+      margin: auto 4px;
+      color: white;
+    }
+    div {
+      margin: auto 2px;
+      color: white;
+    }
+  }
 }
 </style>
 
