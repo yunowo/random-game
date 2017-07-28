@@ -19,10 +19,10 @@ func randToken() string {
 	return base64.StdEncoding.EncodeToString(b)
 }
 
-func setOptions() gin.HandlerFunc {
+func (app *App) setOptions() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		session.Options(sessions.Options{Path: "/random", Domain: "localhost", MaxAge: 2592000})
+		session.Options(sessions.Options{Path: "/random", Domain: app.Config.CookieDomain, MaxAge: 2592000})
 		c.Next()
 	}
 }
@@ -45,7 +45,7 @@ func (app *App) auth(c *gin.Context) {
 	session.Set("user_id", user.ID)
 	session.Save()
 
-	c.Redirect(http.StatusTemporaryRedirect, AppEndpoint+"/#/my")
+	c.Redirect(http.StatusTemporaryRedirect, app.Config.AppEndpoint+"/#/my")
 }
 
 func (app *App) check() gin.HandlerFunc {

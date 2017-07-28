@@ -11,7 +11,7 @@ func (app *App) configRoutes() {
 	r := app.Engine
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8080", "http://app.liuyun.me"},
+		AllowOrigins:     []string{app.Config.AppEndpoint},
 		AllowMethods:     []string{"GET", "PATCH", "POST"},
 		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -22,9 +22,9 @@ func (app *App) configRoutes() {
 	secret := []byte("a secret")
 	scopes := []string{"user:email", }
 	sessionName := "rnd_session"
-	oauth2.Setup(RedirectURL, ConfigFile, scopes, secret)
+	oauth2.Setup(app.Config.ApiEndpoint+"/random/auth", ClientConfigFile, scopes, secret)
 	r.Use(oauth2.Session(sessionName))
-	r.Use(setOptions())
+	r.Use(app.setOptions())
 
 	r.GET("/random/login", loginHandler)
 

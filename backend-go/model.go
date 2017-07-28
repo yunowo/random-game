@@ -4,9 +4,12 @@ import (
 	"log"
 	"time"
 
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/lib/pq"
+	"os"
 )
 
 type Model struct {
@@ -45,7 +48,8 @@ type Request struct {
 
 func (app *App) initDB() {
 	var err error
-	app.DB, err = gorm.Open("postgres", "host=localhost user=postgres dbname=postgres sslmode=disable password=postgres")
+	arg := fmt.Sprintf("host=%v user=%v dbname=%v sslmode=disable password=%v", "localhost", os.Getenv("RND_DB_USER"),os.Getenv("RND_DB_NAME"), os.Getenv("RND_DB_PWD"))
+	app.DB, err = gorm.Open("postgres", arg)
 	if err != nil {
 		log.Fatalf("Got error when connect database, '%v'", err)
 	}
@@ -53,14 +57,4 @@ func (app *App) initDB() {
 	app.DB.AutoMigrate(&User{}, &NameList{})
 
 	app.DB.LogMode(true)
-
-	//namelist := NameList{}
-	//namelist.Names = pq.StringArray{"222", "2332", "3333"}
-	//namelist.Title = "This"
-	//user := User{}
-	//user.Name = "?.?"
-	//user.Password = "?.?"
-	//user.CreatedAt = time.Now()
-	//user.NameLists = []NameList{namelist}
-	//app.DB.Create(&user)
 }

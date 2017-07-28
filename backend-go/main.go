@@ -15,11 +15,15 @@ import (
 type App struct {
 	Engine *gin.Engine
 	DB     *gorm.DB
+	Config Config
 }
 
 func main() {
-	//gin.SetMode(gin.ReleaseMode)
+	config := loadConfig()
+
+	gin.SetMode(gin.ReleaseMode)
 	app := App{}
+	app.Config = config
 	app.initDB()
 	app.Engine = gin.New()
 	r := app.Engine
