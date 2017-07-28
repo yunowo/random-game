@@ -2,8 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 
-// axios.defaults.baseURL = 'https://api.liuyun.me/random';
-axios.defaults.baseURL = 'http://localhost:7000/random';
+axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? 'https://api.liuyun.me/random' : 'http://localhost:7000/random';
 axios.defaults.withCredentials = true;
 
 Vue.use(Vuex);
