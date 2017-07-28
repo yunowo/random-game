@@ -8,9 +8,15 @@ import (
 )
 
 func (app *App) getNameList(c *gin.Context) {
+	user := c.MustGet("user").(User)
 	id := c.Param("id")
 	var nameList NameList
 	if err := app.DB.First(&nameList, id).Error; err == nil {
+		if nameList.Visibility == 1 && nameList.CreatorID != user.ID {
+			forbidden(c)
+			return
+		}
+
 		ok(c, nameList)
 	} else {
 		badRequest(c)
@@ -20,7 +26,7 @@ func (app *App) getNameList(c *gin.Context) {
 func (app *App) createNameList(c *gin.Context) {
 	user := c.MustGet("user").(User)
 	var json Request
-	if c.BindJSON(&json) != nil {
+	if err := c.BindJSON(&json); err != nil {
 		badRequest(c)
 		return
 	}
@@ -33,8 +39,7 @@ func (app *App) createNameList(c *gin.Context) {
 
 	tx := app.DB.Begin()
 	tx.Set("gorm:insert_option", "ON CONFLICT (id) DO NOTHING").Create(&nameList)
-	tx.Exec("INSERT INTO user_name_lists (user_id, name_list_id) VALUES (?, ?)", user.ID, nameList.ID)
-	if tx.Error == nil {
+	if tx.Exec("INSERT INTO user_name_lists (user_id, name_list_id) VALUES (?, ?)", user.ID, nameList.ID).Error == nil {
 		tx.Commit()
 		ok(c, nameList)
 	} else {
@@ -99,8 +104,7 @@ func (app *App) removeNameList(c *gin.Context) {
 		return
 	}
 
-	app.DB.Exec("DELETE FROM user_name_lists WHERE user_id = ? AND name_list_id = ?", user.ID, nid)
-	if app.DB.Error == nil {
+	if app.DB.Exec("DELETE FROM user_name_lists WHERE user_id = ? AND name_list_id = ?", user.ID, nid).Error == nil {
 		ok(c, user)
 	} else {
 		badRequest(c)
@@ -115,7 +119,7 @@ func badRequest(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, Response{nil, gin.H{"status": "Bad request"}, nil})
 }
 
-func Unauthorized(c *gin.Context) {
+func unauthorized(c *gin.Context) {
 	c.JSON(http.StatusUnauthorized, Response{nil, gin.H{"status": "Unauthorized"}, nil})
 }
 
@@ -124,5 +128,5 @@ func forbidden(c *gin.Context) {
 }
 
 func notFound(c *gin.Context) {
-	c.JSON(http.StatusNotFound, Response{nil, gin.H{"status": "NotFound"}, nil})
+	c.JSON(http.StatusNotFound, Response{nil, gin.H{"status": "Not Found"}, nil})
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -53,7 +53,8 @@ func (app *App) check() gin.HandlerFunc {
 		session := sessions.Default(c)
 		userID := session.Get("user_id")
 		if userID == nil {
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid session %s", userID))
+			log.Printf("Invalid session %s", userID)
+			unauthorized(c)
 			return
 		}
 
@@ -61,7 +62,8 @@ func (app *App) check() gin.HandlerFunc {
 		if app.DB.Preload("NameLists").First(&user, userID).Error == nil {
 			c.Set("user", user)
 		} else {
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid user %s", userID))
+			log.Printf("Invalid user %s", userID)
+			unauthorized(c)
 		}
 		c.Next()
 	}
