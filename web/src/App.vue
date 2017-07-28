@@ -22,10 +22,6 @@
           <md-list-item>
             <router-link exact to="/my">我的</router-link>
           </md-list-item>
-  
-          <md-list-item>
-            <md-button @click="showLogin">LOGIN</md-button>
-          </md-list-item>
         </md-list>
       </div>
   
@@ -35,7 +31,7 @@
       <router-view></router-view>
     </transition>
   
-    <login-dialog v-if="!auth" ref="logindlg"></login-dialog>
+    <login-dialog v-if="!auth" ref="login"></login-dialog>
   
     <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
       <span>{{message.text}}</span>
@@ -210,6 +206,8 @@ code {
 </style>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
@@ -218,19 +216,11 @@ export default {
     };
   },
   computed: {
-    loading() {
-      return this.$store.state.loading;
-    },
-    auth() {
-      return this.$store.state.auth;
-    },
-    message() {
-      return this.$store.state.message;
-    },
+    ...mapGetters(['loading', 'auth', 'message']),
   },
   watch: {
     auth(a) {
-      this.showLogin();
+      this.showLogin(a);
     },
     message() {
       this.$refs.snackbar.open();
@@ -243,14 +233,17 @@ export default {
     closeSidenav() {
       this.$refs['main-sidebar'].close();
     },
-    showLogin() {
-      if (!this.auth) {
-        this.$refs.logindlg.$refs['dialog-login'].open();
+    showLogin(a) {
+      if (!a) {
+        setTimeout(() => {
+          this.$refs.login.$refs.dialog.open();
+        }, 100);
       }
     },
   },
   mounted() {
     this.$store.dispatch('sync');
+    this.showLogin(this.auth);
   },
 };
 </script>

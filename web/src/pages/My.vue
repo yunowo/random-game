@@ -1,7 +1,7 @@
 <template>
   <page-content page-title="我的">
     <div id="main-content" class="main-my">
-      <md-card md-with-hover id="card-my">
+      <md-card md-with-hover id="card-my" v-if="auth">
         <md-card-header>
           <div class="md-title">我的</div>
         </md-card-header>
@@ -12,13 +12,13 @@
           <span class="md-subheading">{{user.name}}</span>
         </div>
         <div>
-          <md-button class="md-raised md-primary" md-theme="green" @click="logout">
-            <md-icon md-src="static/img/icon-github.svg"></md-icon>
-            <div>退出</div>
-          </md-button>
           <md-button class="md-raised md-primary" md-theme="blue" @click="$store.dispatch('sync')">
             <md-icon>cloud_download</md-icon>
             <div>同步</div>
+          </md-button>
+          <md-button class="md-raised md-primary" md-theme="green" @click="logout">
+            <md-icon md-src="static/img/icon-github.svg"></md-icon>
+            <div>退出</div>
           </md-button>
         </div>
       </md-card>
@@ -43,11 +43,6 @@
         </md-card-expand>
   
       </md-card>
-  
-      <md-snackbar md-position="bottom center" ref="snackbar" :md-duration="4000">
-        <span>{{message}}</span>
-        <md-button class="md-accent" md-theme="blue" @click="$refs.snackbar.close()">Retry</md-button>
-      </md-snackbar>
     </div>
   </page-content>
 </template>
@@ -78,23 +73,22 @@
 </style>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
       loggedin: true,
-      message: '',
     };
   },
   computed: {
-    user() {
-      return this.$store.state.user;
-    },
+    ...mapGetters(['user', 'auth']),
   },
   methods: {
     logout() {
-
+      document.cookie = 'rnd_session=;path=/random;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      this.$store.dispatch('sync');
     },
-
   },
   mounted() { },
 };

@@ -3,7 +3,7 @@
     <div id="main-content">
       <md-subheader class="info">
         <md-icon>sentiment_neutral</md-icon>
-        <div>离线状态下不可修改</div>
+        <div>离线时下不可修改</div>
       </md-subheader>
       <md-list v-model="user.name_lists">
         <md-list-item v-for="(item, index) in user.name_lists" :key="item.id" @click="openDialog('dialog-share', item)">
@@ -216,7 +216,9 @@
 </style>
 
 <script>
+/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 import axios from 'axios';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -234,12 +236,7 @@ export default {
     };
   },
   computed: {
-    user() {
-      return this.$store.state.user;
-    },
-    loading() {
-      return this.$store.state.loading;
-    },
+    ...mapGetters(['user', 'loading']),
     isEmpty() {
       return this.user.name_lists.length === 0;
     },
@@ -314,19 +311,19 @@ export default {
     create() {
       axios.post('/namelist', {
         data: this.nameList,
-      }).then((response) => {
+      }).then((_response) => {
         this.$store.dispatch('sync');
       }).catch((error) => {
-        console.log(error);
+        this.handleError(error);
       });
     },
     edit() {
       axios.patch(`/namelist/${this.nameList.id}`, {
         data: this.nameList,
-      }).then((response) => {
+      }).then((_response) => {
         this.$store.dispatch('sync');
       }).catch((error) => {
-        console.log(error);
+        this.handleError(error);
       });
     },
     import() {
@@ -335,28 +332,28 @@ export default {
         this.nameList = JSON.parse(atob(this.b64));
       }
 
-      if (this.user.name_lists !== null && !this.fork) {
-        const dup = this.user.name_lists.filter(e => e.id === this.nameList.id);
-        if (dup.length > 0) {
-          this.$store.commit('message', '已有该名单');
-          this.$store.commit('loading', false);
-          return;
-        }
-      }
-
       if (tab === 0) {
+        if (this.user.name_lists !== null && !this.fork) {
+          const dup = this.user.name_lists.filter(e => e.id === this.nameList.id);
+          if (dup.length > 0) {
+            this.$store.commit('message', '已有该名单');
+            this.$store.commit('loading', false);
+            return;
+          }
+        }
+
         const params = new URLSearchParams();
         params.append('id', this.nameList.id);
         params.append('fork', this.fork);
         axios.post('/user/import', params)
-          .then((response) => {
+          .then((_response) => {
             this.$store.dispatch('sync');
           }).catch((error) => {
-            console.log(error);
+            this.handleError(error);
           });
       } else {
-        this.nameList.id = null;
-        this.add();
+        this.nameList.id = 0;
+        this.create();
       }
     },
     remove(type) {
@@ -364,10 +361,10 @@ export default {
       const params = new URLSearchParams();
       params.append('id', this.nameList.id);
       axios.post('/user/remove', params)
-        .then((response) => {
+        .then((_response) => {
           this.$store.dispatch('sync');
         }).catch((error) => {
-          console.log(error);
+          this.handleError(error);
         });
     },
     paramImport() {
@@ -376,6 +373,14 @@ export default {
           this.nameList.id = parseInt(this.$route.query.id, 10);
           this.openDialog('dialog-import');
         }, 100);
+      }
+    },
+    handleError(error) {
+      this.$store.commit('loading', false);
+      if (error.response) {
+        this.$store.commit('message', `Error ${error.response.status} ${error.response.data.error.status}`);
+      } else if (error.request) {
+        this.$store.commit('message', 'Network error');
       }
     },
   },

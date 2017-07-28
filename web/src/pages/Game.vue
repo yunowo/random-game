@@ -144,6 +144,8 @@
 </style>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
@@ -154,9 +156,7 @@ export default {
     };
   },
   computed: {
-    user() {
-      return this.$store.state.user;
-    },
+    ...mapGetters(['user']),
     selectedId: {
       get() { return this.$store.state.selectedId; },
       set(newVal) {

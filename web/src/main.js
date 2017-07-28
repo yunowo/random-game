@@ -3,7 +3,6 @@ import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.css';
 import VueClipboards from 'vue-clipboards';
 import VueQr from 'vue-qr';
-import axios from 'axios';
 
 import App from './App';
 import router from './router';
@@ -87,7 +86,3 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   handleSectionTheme(to);
 });
-
-// axios.defaults.baseURL = 'https://api.liuyun.me/random';
-axios.defaults.baseURL = 'http://localhost:7000/random';
-axios.defaults.withCredentials = true;

@@ -2,6 +2,10 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 
+// axios.defaults.baseURL = 'https://api.liuyun.me/random';
+axios.defaults.baseURL = 'http://localhost:7000/random';
+axios.defaults.withCredentials = true;
+
 Vue.use(Vuex);
 
 /* eslint no-param-reassign:
@@ -17,6 +21,13 @@ export default new Vuex.Store({
       text: '',
       time: Date.now(),
     },
+  },
+  getters: {
+    user: state => state.user,
+    selectedId: state => state.selectedId,
+    loading: state => state.loading,
+    auth: state => state.auth,
+    message: state => state.message,
   },
   mutations: {
     user(state, u) {
@@ -43,21 +54,20 @@ export default new Vuex.Store({
     sync(context) {
       axios.get('/user').then((response) => {
         const user = response.data.data;
-        context.commit('user', user);
         localStorage.setItem('user', JSON.stringify(user));
+        context.commit('user', user);
         context.commit('loading', false);
         context.commit('auth', true);
         context.commit('message', '已同步');
       }).catch((error) => {
         context.commit('loading', false);
         if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          context.commit('message', 'Fail');
-          context.commit('auth', false);
-          // 403 auth=false;dialog.open();
+          if (error.response.status === 401) {
+            context.commit('auth', false);
+          }
+          context.commit('message', `Error ${error.response.status} ${error.response.data.error.status}`);
         } else if (error.request) {
-          context.commit('message', '网络错误');
+          context.commit('message', 'Network error');
         }
       });
     },
