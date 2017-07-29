@@ -61,8 +61,11 @@ func (app *App) updateNameList(c *gin.Context) {
 }
 
 func (app *App) getUser(c *gin.Context) {
-	user := c.MustGet("user").(User)
-	ok(c, user)
+	if user, exist := c.Get("user"); exist {
+		ok(c, user)
+	} else {
+		unauthorized(c)
+	}
 }
 
 // params: id int, fork bool
