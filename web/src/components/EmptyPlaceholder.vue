@@ -2,7 +2,7 @@
   <div class="empty">
     <div class="icon-circle md-primary">
       <md-ink-ripple />
-      <img src="/static/img/ic_nothing.png"></img>
+      <img src="./static/img/ic_nothing.png"></img>
       <div class="md-headline">无名单</div>
       <div class="md-subheading">创建或导入一个</div>
     </div>
