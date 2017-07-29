@@ -164,7 +164,7 @@ export default {
       },
     },
     isEmpty() {
-      return this.user === null || this.user.name_lists == null || this.user.name_lists.length === 0;
+      return this.user === null || this.user.name_lists === null || this.user.name_lists.length === 0;
     },
     max() {
       return Math.max(...this.randomized);

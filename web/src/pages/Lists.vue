@@ -238,7 +238,7 @@ export default {
   computed: {
     ...mapGetters(['user', 'loading']),
     isEmpty() {
-      return this.user === null || this.user.name_lists == null || this.user.name_lists.length === 0;
+      return this.user === null || this.user.name_lists === null || this.user.name_lists.length === 0;
     },
     clipboard() {
       if (this.$refs['share-tabs']) {

@@ -2,13 +2,14 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 
-axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? 'https://api.liuyun.me/random' : 'http://localhost:7000/random';
+axios.defaults.baseURL = process.env.NODE_ENV === 'production' ?
+  'https://api.liuyun.me/random' :
+  'http://localhost:7000/random';
 axios.defaults.withCredentials = true;
 
 Vue.use(Vuex);
 
-/* eslint no-param-reassign:
-["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }] */
+/* eslint no-param-reassign: ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }] */
 
 export default new Vuex.Store({
   state: {

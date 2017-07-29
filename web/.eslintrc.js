@@ -37,5 +37,6 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     'indent': [1, 2, { "SwitchCase": 1 }],
     'no-unused-vars': [1],
+    'max-len': ["error", {"code": 120, "ignoreComments": true }],
   }
 }
