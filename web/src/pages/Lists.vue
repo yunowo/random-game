@@ -3,7 +3,7 @@
     <div id="main-content">
       <md-subheader class="info">
         <md-icon>sentiment_neutral</md-icon>
-        <div>离线时下不可修改</div>
+        <div>离线时不可修改</div>
       </md-subheader>
       <md-list v-model="user.name_lists">
         <md-list-item v-for="(item, index) in user.name_lists" :key="item.id" @click="openDialog('dialog-share', item)">
@@ -255,7 +255,7 @@ export default {
       return '';
     },
     qrURL() {
-      return `https://app.liuyun.me/random/#/lists?id=${this.nameList.id}`;
+      return `https://app.liuyun.me/random/lists?id=${this.nameList.id}`;
     },
   },
   created() {

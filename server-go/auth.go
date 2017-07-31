@@ -45,7 +45,7 @@ func (app *App) auth(c *gin.Context) {
 	session.Set("user_id", user.ID)
 	session.Save()
 
-	c.Redirect(http.StatusTemporaryRedirect, app.Config.AppEndpoint+"/random/#/my")
+	c.Redirect(http.StatusTemporaryRedirect, app.Config.AppEndpoint+"/random/my")
 }
 
 func (app *App) check() gin.HandlerFunc {
