@@ -12,15 +12,15 @@
       <div class="main-sidebar-links">
         <md-list class="md-dense">
           <md-list-item>
-            <router-link exact to="/">随机</router-link>
+            <router-link exact to="/random/">随机</router-link>
           </md-list-item>
   
           <md-list-item>
-            <router-link exact to="/lists">名单</router-link>
+            <router-link exact to="/random/lists">名单</router-link>
           </md-list-item>
   
           <md-list-item>
-            <router-link exact to="/my">我的</router-link>
+            <router-link exact to="/random/my">我的</router-link>
           </md-list-item>
         </md-list>
       </div>

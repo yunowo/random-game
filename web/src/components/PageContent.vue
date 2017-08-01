@@ -29,6 +29,9 @@
 .main-header {
   z-index: 2;
   color: #fff !important;
+  @media (max-width: 480px) {
+    min-height: 48px;
+  }
 }
 
 .nav-trigger {

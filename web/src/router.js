@@ -10,15 +10,15 @@ Vue.use(Router);
 export default new Router({
   mode: 'history',
   routes: [{
-    path: '/',
+    path: '/random/',
     name: 'game',
     component: Game,
   }, {
-    path: '/lists',
+    path: '/random/lists',
     name: 'lists',
     component: Lists,
   }, {
-    path: '/my',
+    path: '/random/my',
     name: 'my',
     component: My,
   }, {
