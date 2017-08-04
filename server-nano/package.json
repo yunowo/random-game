@@ -1,0 +1,19 @@
+{
+  "name": "random-game-koa",
+  "version": "1.0.0",
+  "description": "A game",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Yun",
+  "license": "ISC",
+  "dependencies": {
+    "boom": "^5.2.0",
+    "co-redis": "^2.1.1",
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-router": "^7.2.1",
+    "redis": "^2.7.1"
+  }
+}
