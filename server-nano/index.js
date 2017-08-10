@@ -9,11 +9,13 @@ const wrapper = require('co-redis');
 
 const app = new Koa();
 const router = new Router();
-const client = redis.createClient();
+const client = redis.createClient({
+  'host': 'redis',
+});
 const clientCo = wrapper(client);
 
 app.use(bodyParser());
-app.use(async (ctx, next) => {
+app.use(async(ctx, next) => {
   const start = Date.now();
   await next();
   const ms = Date.now() - start;
@@ -34,12 +36,12 @@ clientCo.get('count')
   });
 
 router
-  .get('/rnd/list/:id', async (ctx) => {
+  .get('/rnd/list/:id', async(ctx) => {
     const lst = await clientCo.smembers(`list:${ctx.params.id}`);
     ctx.assert(lst.length !== 0, 404, 'Error: Not found');
     ctx.body = lst.join(', ');
   })
-  .post('/rnd/list', async (ctx) => {
+  .post('/rnd/list', async(ctx) => {
     const count = await clientCo.get('count');
     const id = parseInt(count, 10) + 1;
 
@@ -52,12 +54,12 @@ router
       .exec();
     ctx.body = `OK, ID=${id}`;
   })
-  .get('/rnd/:id', async (ctx) => {
+  .get('/rnd/:id', async(ctx) => {
     const chosen = await clientCo.srandmember(`list:${ctx.params.id}`);
     ctx.assert(chosen !== null, 400, 'Error');
     ctx.body = chosen;
   })
-  .get('/rnd', async (ctx) => {
+  .get('/rnd', async(ctx) => {
     ctx.body = 'Welcome to rnd.';
   });
 

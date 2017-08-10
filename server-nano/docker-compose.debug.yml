@@ -8,6 +8,8 @@ services:
     ports:
       - 3000:3000
       - 9229:9229
+    links: 
+      - redis
     volumes:
       - .:/usr/src/app
     command: node --inspect app.js

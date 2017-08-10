@@ -5,5 +5,7 @@ services:
     build: .
     ports:
       - 3000:3000
+  links: 
+      - redis
   redis:
     image: redis:4-alpine
