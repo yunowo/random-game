@@ -12,6 +12,6 @@ services:
       - redis
     volumes:
       - .:/usr/src/app
-    command: node --inspect app.js
+    command: node --inspect index.js
   redis:
     image: redis:4-alpine
