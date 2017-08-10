@@ -1,11 +1,11 @@
 version: '2.1'
 
 services:
-  rnd-node:
+  node:
     build: .
     ports:
       - 3000:3000
-  links: 
+    links:
       - redis
   redis:
     image: redis:4-alpine

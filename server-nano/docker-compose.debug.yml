@@ -1,7 +1,7 @@
 version: '2.1'
 
 services:
-  rnd-node:
+  node:
     build: .
     environment:
       NODE_ENV: development
