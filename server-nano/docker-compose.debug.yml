@@ -1,0 +1,17 @@
+version: '2.1'
+
+services:
+  node:
+    build: .
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3000:3000
+      - 9229:9229
+    links: 
+      - redis
+    volumes:
+      - .:/usr/src/app
+    command: node --inspect index.js
+  redis:
+    image: redis:4-alpine
