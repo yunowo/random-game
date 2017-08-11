@@ -1,6 +1,10 @@
 # Random
 A toy that picks out the luckiest one.
 
+## Prerequisites
+- Docker
+- Docker Compose
+
 ## Web app
 - Built with Vue.js & Vue Material.
 - Randomly choose a name from a name list.
