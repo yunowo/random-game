@@ -48,7 +48,7 @@ type Request struct {
 
 func (app *App) initDB() {
 	var err error
-	arg := fmt.Sprintf("host=%v user=%v dbname=%v sslmode=disable password=%v", "localhost", os.Getenv("RND_DB_USER"),os.Getenv("RND_DB_NAME"), os.Getenv("RND_DB_PWD"))
+	arg := fmt.Sprintf("host=%v user=%v dbname=%v sslmode=disable password=%v", "postgres", os.Getenv("RND_DB_USER"),os.Getenv("RND_DB_NAME"), os.Getenv("RND_DB_PWD"))
 	app.DB, err = gorm.Open("postgres", arg)
 	if err != nil {
 		log.Fatalf("Got error when connect database, '%v'", err)

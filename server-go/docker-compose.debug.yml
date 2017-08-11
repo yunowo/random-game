@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+  go:
+    build: .
+    ports:
+      - 7000:7000
+    links:
+      - postgres
+  postgres:
+    image: postgres:9.6-alpine
+    environment:
+      - RND_DEBUG:1
+      - RND_DB_USER:"${RND_DB_USER}"
+      - RND_DB_NAME:"${RND_DB_NAME}"
+      - RND_DB_PWD:"${RND_DB_PWD}"
+      - RND_CONFIG:"${RND_CONFIG}"
