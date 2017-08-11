@@ -5,7 +5,7 @@ A toy that picks out the luckiest one.
 - Built with Vue.js & Vue Material.
 - Randomly choose a name from a name list.
 - Uses GitHub login as authentication.
-- Store lists and sync them between devices.
+- Save name lists and sync between devices.
 - Share lists with friends.
 - [Play demo here.](https://app.liuyun.me/random)
 ### Build
@@ -34,7 +34,7 @@ Welcome to rnd.
 ```
 #### Create a new name list
 ```
-$ curl -d "names=A,B,C" https://api.liuyun.me/rnd/list
+$ curl https://api.liuyun.me/rnd/list -d "names=A,B,C"
 A, B, C
 ```
 #### Get an existing name list
