@@ -15,16 +15,17 @@ Run `npm install && npm build`.
 - Built using gin-gonic with some middlewares.
 - Store data and sessions with PostgreSQL
 ### Build and run
-Run `docker-compose up`.
-The server listens on port 7000.
+- Write configs in `.env` file.
+- Run `docker-compose up`.
+- The server listens on port 7000.
 ### Usage
 Read `routes.go` and guess how to use it.
 
 ## Node server
 Very very simple APIs bulit with Koa & redis.
 ### Build and run
-Run `docker-compose up`.
-The server listens on port 3000.
+- Run `docker-compose up`.
+- The server listens on port 3000.
 ### Usage
 #### Test the server
 ```
