@@ -33,11 +33,13 @@ $ curl https://api.liuyun.me/rnd/
 Welcome to rnd.
 ```
 #### Create a new name list
+Separate the names using comma.
 ```
 $ curl https://api.liuyun.me/rnd/list -d "names=A,B,C"
 OK, ID=1
 ```
 #### Get an existing name list
+name list ID is 1.
 ```
 $ curl https://api.liuyun.me/rnd/list/1
 A, B, C
