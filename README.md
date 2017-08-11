@@ -28,20 +28,24 @@ The server listens on port 3000.
 ### Usage
 #### Test the server
 ```
-curl https://api.liuyun.me/rnd
+$ curl https://api.liuyun.me/rnd/
+Welcome to rnd.
 ```
 #### Create a new name list
 ```
-curl -d "names=A,B,C,D" https://api.liuyun.me/rnd/list
+$ curl -d "names=A,B,C" https://api.liuyun.me/rnd/list
+A, B, C
 ```
 #### Get an existing name list
 ```
-curl https://api.liuyun.me/rnd/list/1
+$ curl https://api.liuyun.me/rnd/list/1
+OK, ID=1
 ```
 #### Get a random name
 1 is the name list ID.
 ```
-curl https://api.liuyun.me/rnd/1
+$ curl https://api.liuyun.me/rnd/1
+B
 ```
 
 ## WeChat App (Deprecated)

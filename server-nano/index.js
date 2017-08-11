@@ -38,29 +38,29 @@ clientCo.get('count')
 router
   .get('/rnd/list/:id', async(ctx) => {
     const lst = await clientCo.smembers(`list:${ctx.params.id}`);
-    ctx.assert(lst.length !== 0, 404, 'Error: Not found');
-    ctx.body = lst.join(', ');
+    ctx.assert(lst.length !== 0, 404, 'Error: Not found\n');
+    ctx.body = lst.join(', ') + '\n';
   })
   .post('/rnd/list', async(ctx) => {
     const count = await clientCo.get('count');
     const id = parseInt(count, 10) + 1;
 
     const names = ctx.request.body.names ? ctx.request.body.names.split(',') : [];
-    ctx.assert(names.length !== 0, 400, 'Error: Empty');
+    ctx.assert(names.length !== 0, 400, 'Error: Empty\n');
 
     const res = await clientCo.multi()
       .sadd(`list:${id}`, names)
       .incr('count')
       .exec();
-    ctx.body = `OK, ID=${id}`;
+    ctx.body = `OK, ID=${id}\n`;
   })
   .get('/rnd/:id', async(ctx) => {
     const chosen = await clientCo.srandmember(`list:${ctx.params.id}`);
-    ctx.assert(chosen !== null, 400, 'Error');
-    ctx.body = chosen;
+    ctx.assert(chosen !== null, 400, 'Error\n');
+    ctx.body = chosen + '\n';
   })
   .get('/rnd', async(ctx) => {
-    ctx.body = 'Welcome to rnd.';
+    ctx.body = 'Welcome to rnd.\n';
   });
 
 app
