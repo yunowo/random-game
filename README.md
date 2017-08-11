@@ -35,12 +35,12 @@ Welcome to rnd.
 #### Create a new name list
 ```
 $ curl https://api.liuyun.me/rnd/list -d "names=A,B,C"
-A, B, C
+OK, ID=1
 ```
 #### Get an existing name list
 ```
 $ curl https://api.liuyun.me/rnd/list/1
-OK, ID=1
+A, B, C
 ```
 #### Get a random name
 name list ID is 1.
