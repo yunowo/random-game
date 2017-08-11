@@ -59,3 +59,6 @@ B
 Due to regulations in China, server domains must be whitelisted in order to make requests. So there will be no sync or share features. This version is no longer maintained.
 ### Usage
 Join [B515](https://github.com/B515) organization and you will get access to the private beta.
+
+## License
+MIT
