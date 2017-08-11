@@ -7,13 +7,13 @@ A toy that picks out the luckiest one.
 - Uses GitHub login as authentication.
 - Store lists and sync them between devices.
 - Share lists with friends.
-- [Demo here.](https://app.liuyun.me/random)
+- [Play demo here.](https://app.liuyun.me/random)
 ### Build
 Run `npm install && npm build`.
 
 ## Go server
 - Built using gin-gonic with some middlewares.
-- Store data and sessions with PostgreSQL
+- Store data and sessions with PostgreSQL.
 ### Build and run
 - Write configs in `.env` file.
 - Run `docker-compose up`.
@@ -43,7 +43,7 @@ $ curl https://api.liuyun.me/rnd/list/1
 OK, ID=1
 ```
 #### Get a random name
-1 is the name list ID.
+name list ID is 1.
 ```
 $ curl https://api.liuyun.me/rnd/1
 B
