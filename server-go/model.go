@@ -1,15 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
-
-	"fmt"
+	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/lib/pq"
-	"os"
 )
 
 type Model struct {

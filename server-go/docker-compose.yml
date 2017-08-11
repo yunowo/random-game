@@ -7,11 +7,17 @@ services:
       - 7000:7000
     links:
       - postgres
+    depends_on:
+      - postgres
+    environment:
+      - RND_DEBUG=0
+      - RND_DB_USER=${DB_USER}
+      - RND_DB_NAME=${DB_NAME}
+      - RND_DB_PWD=${DB_PWD}
+      - RND_CONFIG=${CONFIG}
   postgres:
     image: postgres:9.6-alpine
     environment:
-      - RND_DEBUG:0
-      - RND_DB_USER:"${RND_DB_USER}"
-      - RND_DB_NAME:"${RND_DB_NAME}"
-      - RND_DB_PWD:"${RND_DB_PWD}"
-      - RND_CONFIG:"${RND_CONFIG}"
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PWD}
+      - POSTGRES_DB=${DB_NAME}
