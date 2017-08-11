@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+  go:
+    build: .
+    ports:
+      - 7000:7000
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    environment:
+      - RND_DEBUG=1
+      - RND_DB_USER=${DB_USER}
+      - RND_DB_NAME=${DB_NAME}
+      - RND_DB_PWD=${DB_PWD}
+      - RND_CONFIG=${CONFIG}
+  postgres:
+    image: postgres:9.6-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PWD}
+      - POSTGRES_DB=${DB_NAME}

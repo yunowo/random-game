@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.3'
 
 services:
   node:
@@ -10,8 +10,6 @@ services:
       - 9229:9229
     links: 
       - redis
-    volumes:
-      - .:/usr/src/app
     command: node --inspect index.js
   redis:
     image: redis:4-alpine
