@@ -43,6 +43,9 @@ Page({
       return value != ''
     })
     var nameLists = this.data.nameLists
+    if (nameLists === "") {
+      nameLists = []
+    }
     if (!this.data.isNew) {
       nameLists.forEach(function (e, i) {
         if (e.id == nameList.id) {
